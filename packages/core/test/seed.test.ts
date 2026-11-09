@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { EQUIPMENT, EXCLUDED_INGREDIENT_KEYWORDS, RECIPES, SUBSTITUTIONS, isRecipeAllowed, recipeMacros } from '../src';
+import {
+  DAY_TEMPLATES, DEFAULT_DAY_TEMPLATE_ID, EQUIPMENT, EXCLUDED_INGREDIENT_KEYWORDS, NUTRITION_TARGETS, RECIPES, SEED_RATINGS, SUBSTITUTIONS,
+  isRecipeAllowed, recipeMacros,
+} from '../src';
 import { index, recipe } from './fixtures';
 
 describe('seed', () => {
@@ -35,5 +38,28 @@ describe('seed', () => {
 
   it('aucune recette ne demande un matériel absent', () => {
     for (const r of RECIPES) for (const e of r.equipment) expect(EQUIPMENT, r.id).toContain(e);
+  });
+
+  it('chaque modèle de journée vise 2 100-2 200 kcal et au moins 180 g de protéines', () => {
+    for (const t of DAY_TEMPLATES) {
+      const kcal = t.slots.reduce((s, x) => s + x.kcal, 0);
+      const protein = t.slots.reduce((s, x) => s + x.protein, 0);
+      expect(kcal, t.id).toBeGreaterThanOrEqual(NUTRITION_TARGETS.kcalMin);
+      expect(kcal, t.id).toBeLessThanOrEqual(NUTRITION_TARGETS.kcalMax);
+      expect(protein, t.id).toBeGreaterThanOrEqual(NUTRITION_TARGETS.proteinG);
+    }
+  });
+
+  it('le petit-déjeuner banane + whey correspond au créneau du modèle par défaut', () => {
+    const t = DAY_TEMPLATES.find((x) => x.id === DEFAULT_DAY_TEMPLATE_ID)!;
+    const slot = t.slots.find((x) => x.slot === 'petit_dej')!;
+    const m = recipeMacros(recipe('banane-shaker-whey'), index);
+    expect(Math.abs(m.kcal / slot.kcal - 1)).toBeLessThanOrEqual(0.1);
+    expect(m.protein).toBeGreaterThanOrEqual(slot.protein * 0.9);
+  });
+
+  it('toutes les recettes de départ sont notées « aimé », compagne « à tester »', () => {
+    expect(SEED_RATINGS).toHaveLength(RECIPES.length);
+    expect(SEED_RATINGS.every((r) => r.userLiked && r.partnerVerdict === 'a_tester')).toBe(true);
   });
 });

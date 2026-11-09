@@ -17,6 +17,7 @@ const defs: Def[] = [
   { id: 'rumsteak', name: 'Rumsteak', aisle: 'volaille_boucherie', unit: 'g', packages: [400], per100g: m(125, 22, 4, 0), role: 'meat', freezable: true },
 
   // Fruits et légumes
+  { id: 'banane', name: 'Banane', aisle: 'fruits_legumes', unit: 'piece', gramsPerPiece: 120, per100g: m(90, 1.1, 0.3, 20), role: 'vegetable' },
   { id: 'pomme-de-terre', name: 'Pomme de terre', aisle: 'fruits_legumes', unit: 'g', per100g: m(80, 2, 0.1, 17), role: 'starch' },
   { id: 'carotte', name: 'Carotte', aisle: 'fruits_legumes', unit: 'piece', gramsPerPiece: 100, per100g: m(36, 0.8, 0.2, 7.6), role: 'vegetable' },
   { id: 'oignon', name: 'Oignon', aisle: 'fruits_legumes', unit: 'piece', gramsPerPiece: 120, per100g: m(40, 1.2, 0.2, 8), role: 'vegetable' },

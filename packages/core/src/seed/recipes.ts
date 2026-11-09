@@ -105,6 +105,11 @@ export const RECIPES: Recipe[] = [
       l('sauce-soja', 1, 'c_a_soupe', 'sauce de trempage'), l('vinaigre-riz', 1, 'c_a_soupe', 'sauce de trempage'), l('huile-neutre', 1, 'c_a_cafe')],
   }),
   r({
+    id: 'banane-shaker-whey', name: 'Banane + shaker de whey', cuisine: 'autre', slots: ['petit_dej'], tags: ['diete', 'rapide'],
+    lines: [l('banane', 1, 'piece'), l('whey', 30, 'g', "dans l'eau")],
+    steps: ["Shaker : 30 g de whey dans 250 ml d'eau.", 'Une banane.'],
+  }),
+  r({
     id: 'overnight-oats', name: 'Overnight oats protéinés', cuisine: 'autre', slots: ['petit_dej'], mode: 'batch', maxFridgeDays: 3, declared: { kcal: 560, protein: 52 },
     lines: [l('flocons-avoine', 60), l('chia', 10), l('whey', 30), l('fromage-blanc-0', 150), l('lait-demi-ecreme', 100, 'ml'),
       l('fruits-rouges-surgeles', 50), l('miel', 10)],

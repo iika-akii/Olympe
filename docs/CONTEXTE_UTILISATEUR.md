@@ -66,7 +66,9 @@ Discipline de développement imposée : **headless-first**. Les règles métier,
 > | Modèle | Petit-déj | Déjeuner | Collation | Dîner | Total |
 > |---|---|---|---|---|---|
 > | 2 repas + collation | — | 850 kcal / 65 g P | 450 / 50 | 850 / 65 | 2 150 / 180 |
-> | 3 repas + collation | 500 / 45 | 650 / 50 | 350 / 35 | 650 / 50 | 2 150 / 180 |
+> | **3 repas + collation (par défaut)** | 230 / 25 (banane + shaker de whey) | 750 / 60 | 400 / 45 | 750 / 55 | 2 130 / 185 |
+>
+> Modèle par défaut choisi le 9/11/2026 : **3 repas**, petit-déjeuner = banane + shaker de whey (30 g dans l'eau). Les recettes « diète » (570-680 kcal) sont réajustées à ~750 kcal par le moteur d'adaptation (environ +30 % de viande, +15 à 30 % de riz).
 >
 > Le tableau ci-dessous décrit l'ancienne journée type, gardée pour référence.
 
@@ -103,6 +105,8 @@ Discipline de développement imposée : **headless-first**. Les règles métier,
 
 - Vit en couple. La compagne est **absente en novembre 2026** (alternance). Pendant cette période, l'utilisateur cuisine pour lui seul.
 - Quand elle est là : mêmes plats pour les deux, **portion de la compagne ≈ 2/3** de celle de l'utilisateur (**1/2 pour la viande**). Leurs goûts diffèrent, et c'est une cause d'abandon de la diète.
+- Notes de départ (9/11/2026) : **toutes les recettes du seed plaisent à l'utilisateur** ; la compagne n'en a goûté aucune (« à tester »).
+- Dates de présence de la compagne : **saisies par l'utilisateur dans l'app** (calendrier), pas de date fixe.
 - Partage : l'app est **strictement personnelle**. Seul besoin : **envoyer la liste de courses** à la compagne (texte via le menu de partage Android).
 - **Exigence pour l'app** : chaque recette doit pouvoir sortir 2 portions différentes (utilisateur / compagne) à partir d'un seul batch, et les recettes doivent pouvoir être notées « plaît aussi à la compagne : oui / non / à tester ».
 
@@ -216,8 +220,7 @@ L'app affiche la tendance et applique les règles du §2. Pas de réaction aux v
 Résolues le 9/11/2026 : nouveau projet (§0) ; crevettes, coriandre, champignons exclus ; pas de wok ni de cuiseur à riz ; Android ; levier = féculents ; pesées historiques dans l'app Fitbit (import via l'export Google Takeout).
 
 Restantes, à poser au début de la tranche concernée :
-1. Programme d'entraînement détaillé : exercices, séries, répétitions, charges actuelles (tranche Entraînement).
-2. Recettes déjà testées et notées : aimé / pas aimé / plaît à la compagne (tranche UI Cuisine).
-3. Date de retour de la compagne (tranche Planificateur).
-4. Clé API Anthropic pour l'import de recettes par IA (tranche Import).
-5. Modèle de journée par défaut : 2 repas ou 3 repas (tranche UI Cuisine).
+1. Programme d'entraînement détaillé : exercices, séries, répétitions, charges actuelles (tranche Entraînement). L'utilisateur le fournira.
+2. Clé API Anthropic pour l'import de recettes par IA (tranche Import) : saisie dans l'app, jamais dans le chat ni dans le dépôt.
+
+Résolues ensuite (9/11/2026) : modèle de journée par défaut = 3 repas ; recettes du seed toutes aimées, compagne « à tester » ; dates de la compagne saisies dans l'app.

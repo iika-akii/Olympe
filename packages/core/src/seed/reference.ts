@@ -1,4 +1,5 @@
-import type { DayTemplate, Equipment, NutritionTargets, Substitution } from '../domain';
+import type { DayTemplate, Equipment, NutritionTargets, RecipeRating, Substitution } from '../domain';
+import { RECIPES } from './recipes';
 
 /** Cibles du §2. Le levier d'ajustement est désormais les féculents. */
 export const NUTRITION_TARGETS: NutritionTargets = { kcalMin: 2100, kcalMax: 2200, kcalFloor: 1900, proteinG: 180, fatG: 65 };
@@ -15,16 +16,20 @@ export const DAY_TEMPLATES: DayTemplate[] = [
     ],
   },
   {
+    // Petit-déjeuner léger (banane + shaker de whey ≈ 220 kcal) : les repas sont relevés pour rester au-dessus du plancher.
     id: 'trois-repas',
-    label: 'Petit-déjeuner, 2 repas + collation',
+    label: 'Petit-déjeuner léger, 2 repas + collation',
     slots: [
-      { slot: 'petit_dej', kcal: 500, protein: 45 },
-      { slot: 'dejeuner', kcal: 650, protein: 50 },
-      { slot: 'collation', kcal: 350, protein: 35 },
-      { slot: 'diner', kcal: 650, protein: 50 },
+      { slot: 'petit_dej', kcal: 230, protein: 25 },
+      { slot: 'dejeuner', kcal: 750, protein: 60 },
+      { slot: 'collation', kcal: 400, protein: 45 },
+      { slot: 'diner', kcal: 750, protein: 55 },
     ],
   },
 ];
+
+/** Choix de l'utilisateur (9/11/2026). */
+export const DEFAULT_DAY_TEMPLATE_ID = 'trois-repas';
 
 export const EQUIPMENT: Equipment[] = ['poele', 'casserole', 'micro_ondes', 'blender', 'air_fryer', 'four', 'plaque_induction'];
 
@@ -47,3 +52,8 @@ export const SUBSTITUTIONS: Substitution[] = [
   { id: 'farine-whey', from: 'farine', to: [{ ingredientId: 'farine', ratio: 0.6 }, { ingredientId: 'whey', ratio: 0.4 }], kind: 'allegement', label: 'Une partie de la farine → whey' },
   { id: 'sucre-reduit', from: 'sucre', to: [{ ingredientId: 'sucre', ratio: 0.7 }], kind: 'allegement', label: 'Sucre réduit de 30 %' },
 ];
+
+/** Toutes les recettes de départ plaisent à l'utilisateur ; la compagne ne les a pas encore goûtées (9/11/2026). */
+export const SEED_RATINGS: RecipeRating[] = RECIPES.map((r) => ({
+  recipeId: r.id, userLiked: true, partnerVerdict: 'a_tester', updatedAt: '2026-11-09',
+}));

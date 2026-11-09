@@ -41,7 +41,7 @@
 | Ajout de recette | Coller un texte ou un lien → lecture du format standard `schema.org/Recipe` des sites (gratuit) → sinon API Claude → validation par l'utilisateur | Saisie manuelle = cause d'abandon |
 | Adaptation | 3 modes au choix : **réajuster**, **alléger**, **compenser** | Choix de l'utilisateur, « ça dépend » |
 | Levier calorique | **Féculents** | La collation seule ne pouvait retirer que 70 kcal |
-| Journée | 2 modèles stockés comme données : 2 repas + collation, ou 3 repas + collation | L'utilisateur hésite entre les deux |
+| Journée | 2 modèles stockés comme données ; **défaut : 3 repas** (petit-déj banane + whey 230 kcal, repas 750, collation 400) | Choix de l'utilisateur. Les plats diète sont réajustés de ~650 à ~750 kcal |
 | Logique | **Headless-first** : toute règle dans `packages/core`, fonctions pures testées | Imposé |
 
 ## 3. Vue d'ensemble
@@ -88,7 +88,7 @@ Typé dans `packages/core/src/domain.ts`. Unités canoniques g / ml / pièce ; l
 |---|---|---|
 | 0 | Planning et courses de la semaine sur tableur, sans app | À faire par l'utilisateur, maintenant |
 | **1** | `packages/core` : domaine, seed (60 ingrédients, 23 recettes), portions, adaptation, exclusions, courses, texte à partager, règles d'ajustement ; 34 tests | **Fait** |
-| 2 | Planificateur hebdo (batch ≤ 3 j, congélation J+3, riz de la veille, ≥ 3 plats, mutualisation, report si courses ratées le dimanche) | Suivante |
+| 2 | Planificateur hebdo (batch ≤ 3 j, congélation J+3, riz de la veille, ≥ 3 plats, mutualisation, report si courses ratées le dimanche). Dates de présence de la compagne = entrée saisie par l'utilisateur ; portions des plats réajustées au modèle de journée | Suivante |
 | 3 | App Expo + `packages/db` : onglet Cuisine (plan, recette du jour, courses à cocher, partage), choix du mode d'adaptation, export Markdown | |
 | 3b | Import de recettes : format standard des sites, puis API Claude | Clé API à fournir |
 | 4 | Socle métriques : pesée 1 tap, import Google Takeout, bilan du dimanche, règles d'ajustement | |
