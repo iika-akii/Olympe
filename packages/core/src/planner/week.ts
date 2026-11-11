@@ -9,6 +9,7 @@ import { portionFor } from '../recipes/portions';
 import { buildShoppingList } from '../shopping/list';
 import { EXCLUDED_INGREDIENT_KEYWORDS } from '../seed/reference';
 import { toGrams } from '../units';
+import { addDays, daysBetween, formatDayShort, weekday } from '../dates';
 
 /**
  * Planificateur de semaine (§5), organisation validée le 11/11/2026 :
@@ -44,9 +45,6 @@ export interface PlannerOptions {
   maxRepeatsPerRecipe?: number;
 }
 
-const DAY_MS = 86_400_000;
-export const addDays = (d: ISODate, n: number): ISODate => new Date(Date.parse(`${d}T00:00:00Z`) + n * DAY_MS).toISOString().slice(0, 10);
-const daysBetween = (a: ISODate, b: ISODate) => Math.round((Date.parse(b) - Date.parse(a)) / DAY_MS);
 
 /** Poids du gaspillage selon le rayon : le frais compte, le surgelé et l'épicerie se gardent. */
 const WASTE_WEIGHT: Record<string, number> = { volaille_boucherie: 1, fruits_legumes: 1, cremerie: 1 };
@@ -60,7 +58,7 @@ interface Adapted { factors: Partial<Record<IngredientRole, number>>; macros: Ma
 
 export function planWeek(o: PlannerOptions): WeekPlan {
   const start = o.startDate;
-  if (new Date(`${start}T00:00:00Z`).getUTCDay() !== 0) throw new Error(`La semaine commence le dimanche des courses : ${start} n'est pas un dimanche.`);
+  if (weekday(start) !== 0) throw new Error(`La semaine commence le dimanche des courses : ${start} n'est pas un dimanche.`);
 
   const cfg = {
     breakfast: o.breakfastRecipeId ?? 'banane-shaker-whey',
@@ -248,7 +246,7 @@ export function planWeek(o: PlannerOptions): WeekPlan {
     const r = recipe(s.recipeId);
     const rice = portionLines(r, 'user', o.index, adapted(r, 'dejeuner').factors).filter((l) => isWeighedStarch(l.ingredientId));
     const riceText = rice.length ? ` ; à peser cru : ${rice.map((l) => `${Math.round(l.grams * s.servings)} g de ${getIngredient(o.index, l.ingredientId).name.toLowerCase()}`).join(', ')}` : '';
-    reminders.push({ date: s.date, kind: 'batch', text: `Batch : ${r.name} × ${s.servings} portions (midis du ${s.covers.join(', ')})${riceText}.` });
+    reminders.push({ date: s.date, kind: 'batch', text: `Batch : ${r.name} × ${s.servings} portions (midis : ${s.covers.map(formatDayShort).join(', ')})${riceText}.` });
   }
   reminders.push(...meatReminders(meals, recipe, o.index, shoppingDate));
   for (const m of meals) {

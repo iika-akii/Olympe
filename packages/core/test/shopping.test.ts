@@ -26,6 +26,8 @@ describe('liste de courses (§7)', () => {
   it('retire le placard en stock et signale le placard à vérifier', () => {
     expect(item('sauce-soja')).toBeUndefined();
     expect(item('mirin')!.aisle).toBe('placard');
+    expect(item('mirin')!.notes).toEqual([]);
+    expect(item('oignon')!.toBuy).toBe(1); // ½ oignon → 1 à acheter
   });
 
   it('demande de congeler seulement la viande cuisinée à partir de J+3 (§5.4)', () => {

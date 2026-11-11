@@ -35,7 +35,7 @@
 | Sujet | Décision | Pourquoi |
 |---|---|---|
 | Plateforme | App **Expo / React Native** en *development build* | Health Connect et notifications fiables (minuteur) impossibles en web |
-| Données | **SQLite local** (`expo-sqlite` + Drizzle) | 1 utilisateur, hors ligne, aucun coût |
+| Données | **SQLite local** (`expo-sqlite`) derrière un pilote minimal `SqlDriver` (exec / run / all) et des migrations `PRAGMA user_version` | 1 utilisateur, hors ligne, aucun coût. Drizzle écarté (11/11/2026) : sa chaîne de migrations Expo demande des plugins Babel/Metro pour 5 tables ; le pilote maison se teste en Node avec `node:sqlite` |
 | Recettes | **Stockées dans SQLite**, ajoutées depuis le téléphone ; **export Markdown compatible Obsidian** | L'utilisateur n'utilise pas Obsidian et ajoute ses recettes le week-end, depuis son téléphone. Un dossier Markdown versionné imposerait un commit à chaque recette |
 | « Cerveau » | Base de plats générale, étiquetée `diete` / `plaisir`, reliée par ingrédients | Les plats plaisir doivent pouvoir être adaptés |
 | Ajout de recette | Coller un texte ou un lien → lecture du format standard `schema.org/Recipe` des sites (gratuit) → sinon API Claude → validation par l'utilisateur | Saisie manuelle = cause d'abandon |
@@ -47,16 +47,16 @@
 ## 3. Vue d'ensemble
 
 ```
-apps/mobile (Expo Router, 5 onglets : Olympe, Entraînement, Forger, Cuisine, Profil)   [tranche 3]
+apps/mobile (Expo Router, 5 onglets : Olympe, Entraînement, Forger, Cuisine, Profil)   [tranche 3 ✔]
    │  écrans → hooks
    ├── adapters : Health Connect (pas, sommeil) · notifications · partage Android · API Claude (import)
    ▼
-packages/db  (Drizzle + expo-sqlite : schéma, migrations, repositories, import du seed)   [tranche 3]
+packages/db  (pilote SqlDriver, migrations, repositories, génération de semaine)          [tranche 3 ✔]
    ▼
 packages/core  (TypeScript pur, sans React / Expo / base)                                 [tranche 1 ✔]
    domain.ts · units · nutrition (macros, ajustement) · recipes (portions, adaptation, exclusions)
    shopping (liste, texte à partager) · seed (ingrédients, recettes, substitutions, modèles de journée)
-   planner [tranche 2] · training [tranche 6] · tracking [tranche 4]
+   planner ✔ · dates, vue des portions, export Markdown ✔ · training [tranche 6] · tracking [tranche 4]
 ```
 
 ## 4. Moteur d'adaptation (`recipes/adapt.ts`)
@@ -95,7 +95,7 @@ Typé dans `packages/core/src/domain.ts`. Unités canoniques g / ml / pièce ; l
 | 0 | Planning et courses de la semaine sur tableur, sans app | À faire par l'utilisateur, maintenant |
 | **1** | `packages/core` : domaine, seed (60 ingrédients, 23 recettes), portions, adaptation, exclusions, courses, texte à partager, règles d'ajustement ; 34 tests | **Fait** |
 | **2** | Planificateur hebdo `planner/week.ts` : dimanche → samedi, batch A dimanche + batch B mercredi (utilisateur seul), dîners frais à deux, samedi midi frais, dimanche midi libre, ≤ 30 min (≤ 20 le mercredi), plafond de recettes à tester, riz de la veille, congélation / décongélation, report des courses au lundi, liste de courses ; 58 tests au total | **Fait** |
-| 3 | App Expo + `packages/db` : onglet Cuisine (plan, recette du jour, courses à cocher, partage), choix du mode d'adaptation, export Markdown | |
+| **3** | App Expo SDK 58 (compatible Expo Go) + `packages/db` : Aujourd'hui (repas, rappels, « elle a aimé ? »), Cuisine (jours de la compagne, génération, semaine), fiche recette (portions toi / elle, batch, verdicts), courses à cocher + partage, plats plaisir (3 modes), Profil (modèle de journée, export Markdown) | **Fait** |
 | 3b | Import de recettes : format standard des sites, puis API Claude | Clé API à fournir |
 | 4 | Socle métriques : pesée 1 tap, import Google Takeout, bilan du dimanche, règles d'ajustement | |
 | 5 | Health Connect (pas, sommeil total) | |

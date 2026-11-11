@@ -2,6 +2,7 @@ import { AISLES, type Ingredient, type ISODate, type PlannedMeal, type Recipe, t
 import { getIngredient, type IngredientIndex } from '../nutrition/macros';
 import { portionFor } from '../recipes/portions';
 import { gramsToUnit, round } from '../units';
+import { daysBetween } from '../dates';
 
 export interface ShoppingOptions {
   meals: readonly PlannedMeal[];
@@ -13,8 +14,6 @@ export interface ShoppingOptions {
   purchaseDate?: ISODate;
 }
 
-const DAY_MS = 86_400_000;
-const daysBetween = (a: ISODate, b: ISODate) => Math.round((Date.parse(b) - Date.parse(a)) / DAY_MS);
 
 /** Combinaison de conditionnements qui couvre le besoin avec le moins de reste, puis le moins de paquets. */
 export function choosePacks(needed: number, packages: readonly number[]): number[] {
@@ -38,11 +37,6 @@ export function choosePacks(needed: number, packages: readonly number[]): number
   };
   search(0, [], 0);
   return (best as { packs: number[] } | null)?.packs ?? [];
-}
-
-function formatQty(value: number, ing: Ingredient): string {
-  if (ing.unit === 'piece') return `${round(value, 1)} pièce(s)`;
-  return `${Math.round(value)} ${ing.unit}`;
 }
 
 /** Liste de courses agrégée et ordonnée par rayon (§7). */
@@ -72,13 +66,12 @@ export function buildShoppingList(o: ShoppingOptions): ShoppingItem[] {
     if (ing.pantry && o.pantryInStock?.has(id)) continue;
     const needed = gramsToUnit(entry.neededGrams, ing);
     const packs = ing.pantry ? [] : choosePacks(needed, ing.packages);
-    const toBuy = packs.length > 0 ? packs.reduce((a, b) => a + b, 0) : ing.unit === 'piece' ? Math.ceil(needed - 1e-9) : needed;
+    const toBuy = packs.length > 0 ? packs.reduce((a, b) => a + b, 0) : ing.unit === 'piece' ? Math.ceil(needed - 1e-9) : Math.ceil(needed - 1e-9);
     const notes: string[] = [];
     if (entry.frozenGrams > 0 && ing.freezable) {
       notes.push(`Congeler ${Math.round(entry.frozenGrams)} g à l'achat, sortir la veille au soir.`);
     }
     if (ing.trap) notes.push(ing.trap);
-    if (ing.pantry) notes.push(`Vérifier le placard : ${formatQty(needed, ing)} nécessaires.`);
     items.push({
       ingredientId: id,
       name: ing.name,

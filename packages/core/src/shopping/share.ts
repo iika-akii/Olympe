@@ -1,6 +1,8 @@
 import { AISLE_LABELS, AISLES, type ShoppingItem } from '../domain';
+import { formatNumber } from '../format';
 
-function formatAmount(item: ShoppingItem): string {
+/** « 2 × 750 g », « 1 × 1 kg », « 7 » : quantité à acheter, prête à afficher. */
+export function formatShoppingAmount(item: ShoppingItem): string {
   if (item.packs.length > 0) {
     const counts = new Map<number, number>();
     for (const p of item.packs) counts.set(p, (counts.get(p) ?? 0) + 1);
@@ -11,7 +13,7 @@ function formatAmount(item: ShoppingItem): string {
 
 function formatUnit(value: number, unit: ShoppingItem['unit']): string {
   if (unit === 'piece') return `${value}`;
-  if (value >= 1000) return `${(value / 1000).toLocaleString('fr-FR')} ${unit === 'g' ? 'kg' : 'L'}`;
+  if (value >= 1000) return `${formatNumber(value / 1000, 2)} ${unit === 'g' ? 'kg' : 'L'}`;
   return `${Math.round(value)} ${unit}`;
 }
 
@@ -22,7 +24,7 @@ export function formatShoppingListText(items: readonly ShoppingItem[], title = '
     const inAisle = items.filter((i) => i.aisle === aisle);
     if (inAisle.length === 0) continue;
     lines.push('', AISLE_LABELS[aisle]);
-    for (const item of inAisle) lines.push(`- ${item.name} : ${formatAmount(item)}`);
+    for (const item of inAisle) lines.push(`- ${item.name} : ${formatShoppingAmount(item)}`);
   }
   return lines.join('\n');
 }

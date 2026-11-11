@@ -66,6 +66,7 @@ function toAdapted(lines: readonly WorkLine[], factors: Partial<Record<Ingredien
 
 function reajuster(lines: WorkLine[], o: AdaptOptions): Pick<AdaptationResult, 'lines' | 'roleFactors' | 'after'> {
   const { target, index } = o;
+  const isDessert = o.recipe.tags.includes('dessert');
   const roles = [...new Set(lines.map((l) => l.role))].filter((r) => ROLE_BOUNDS[r][0] !== ROLE_BOUNDS[r][1]);
   const factors: Partial<Record<IngredientRole, number>> = Object.fromEntries(roles.map((r) => [r, 1]));
 
@@ -81,7 +82,9 @@ function reajuster(lines: WorkLine[], o: AdaptOptions): Pick<AdaptationResult, '
   for (let iter = 0; iter < 50; iter++) {
     let changed = false;
     for (const role of roles) {
-      const [lo, hi] = ROLE_BOUNDS[role];
+      const [lo, boundHi] = ROLE_BOUNDS[role];
+      // Un dessert n'est jamais « grossi » pour atteindre une cible : on ne fait que réduire.
+      const hi = isDessert ? Math.min(boundHi, 1) : boundHi;
       let best = factors[role] ?? 1;
       let bestCost = cost(factors);
       for (let v = lo; v <= hi + 1e-9; v += STEP) {
@@ -128,17 +131,21 @@ export function adaptRecipe(mode: AdaptationMode, o: AdaptOptions): AdaptationRe
   const base: WorkLine[] = portionFor(o.recipe, 'user', o.index);
   const before = macrosOf(base, o.index);
   const common = { mode, recipeId: o.recipe.id, target: o.target, before: roundMacros(before) };
+  // Un dessert pauvre en protéines se complète plutôt qu'il ne se déforme.
+  const pairing = o.recipe.tags.includes('dessert') && before.protein < o.target.protein * 0.5
+    ? [`Associe-le à une source de protéines (skyr + whey, ~${Math.round(o.target.protein - before.protein)} g de protéines) pour tenir ta cible.`]
+    : [];
 
   if (mode === 'reajuster') {
     const r = reajuster(base, o);
-    return { ...common, lines: r.lines, roleFactors: r.roleFactors, after: roundMacros(r.after), appliedSubstitutions: [], notes: [], warnings: gapWarnings(r.after, o.target) };
+    return { ...common, lines: r.lines, roleFactors: r.roleFactors, after: roundMacros(r.after), appliedSubstitutions: [], notes: pairing, warnings: gapWarnings(r.after, o.target) };
   }
 
   if (mode === 'alleger') {
     const r = alleger(base, o);
     const after = macrosOf(r.lines, o.index);
     const warnings = r.applied.length === 0 ? ["Aucune substitution d'allègement connue pour ce plat."] : [];
-    return { ...common, lines: toAdapted(r.lines, {}), roleFactors: {}, after: roundMacros(after), appliedSubstitutions: r.applied, notes: r.notes, warnings: [...warnings, ...gapWarnings(after, o.target)] };
+    return { ...common, lines: toAdapted(r.lines, {}), roleFactors: {}, after: roundMacros(after), appliedSubstitutions: r.applied, notes: [...r.notes, ...pairing], warnings: [...warnings, ...gapWarnings(after, o.target)] };
   }
 
   // compenser
@@ -146,7 +153,7 @@ export function adaptRecipe(mode: AdaptationMode, o: AdaptOptions): AdaptationRe
   const others = o.dayTemplate.slots.filter((s) => s.slot !== o.target.slot);
   const excess = before.kcal - o.target.kcal;
   const warnings: string[] = [];
-  const notes: string[] = [];
+  const notes: string[] = [...pairing];
   let otherSlots = others.map((s) => ({ ...s }));
 
   if (excess > 0) {

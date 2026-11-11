@@ -29,6 +29,12 @@ describe('adaptation : réajuster', () => {
     expect(b.warnings.some((w) => w.includes('Protéines'))).toBe(true);
   });
 
+  it('ne grossit jamais un dessert et propose plutôt un complément protéiné', () => {
+    const b = adaptRecipe('reajuster', opts('brownie', slot('collation')));
+    for (const l of b.lines) expect(l.factor, l.ingredientId).toBeLessThanOrEqual(1);
+    expect(b.notes.join(' ')).toContain('skyr + whey');
+  });
+
   it('est déterministe', () => {
     expect(adaptRecipe('reajuster', opts('korean-chicken', slot('diner')))).toEqual(r);
   });

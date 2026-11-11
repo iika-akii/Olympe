@@ -1,10 +1,14 @@
 export * from './domain';
 export * from './units';
+export * from './dates';
+export * from './format';
 export * from './nutrition/macros';
 export * from './nutrition/adjust';
 export * from './recipes/portions';
 export * from './recipes/adapt';
 export * from './recipes/exclusions';
+export * from './recipes/view';
+export * from './recipes/markdown';
 export * from './shopping/list';
 export * from './shopping/share';
 export { INGREDIENTS } from './seed/ingredients';

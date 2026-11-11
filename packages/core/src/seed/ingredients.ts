@@ -22,7 +22,7 @@ const defs: Def[] = [
   { id: 'carotte', name: 'Carotte', aisle: 'fruits_legumes', unit: 'piece', gramsPerPiece: 100, per100g: m(36, 0.8, 0.2, 7.6), role: 'vegetable' },
   { id: 'oignon', name: 'Oignon', aisle: 'fruits_legumes', unit: 'piece', gramsPerPiece: 120, per100g: m(40, 1.2, 0.2, 8), role: 'vegetable' },
   { id: 'echalote', name: 'Échalote', aisle: 'fruits_legumes', unit: 'piece', gramsPerPiece: 30, per100g: m(72, 2.5, 0.1, 15), role: 'vegetable' },
-  { id: 'ail', name: 'Ail', aisle: 'fruits_legumes', unit: 'piece', gramsPerPiece: 5, per100g: m(130, 6, 0.5, 25), role: 'other', pantry: true },
+  { id: 'ail', name: 'Ail (gousses)', aisle: 'fruits_legumes', unit: 'piece', gramsPerPiece: 5, per100g: m(130, 6, 0.5, 25), role: 'other', pantry: true },
   { id: 'gingembre', name: 'Gingembre frais', aisle: 'fruits_legumes', unit: 'g', per100g: m(80, 1.8, 0.8, 15), role: 'other' },
   { id: 'ciboule', name: 'Ciboule', aisle: 'fruits_legumes', unit: 'g', packages: [100], per100g: m(30, 1.8, 0.2, 5), role: 'vegetable' },
   { id: 'poivron', name: 'Poivron', aisle: 'fruits_legumes', unit: 'piece', gramsPerPiece: 150, per100g: m(30, 1, 0.3, 5), role: 'vegetable' },
@@ -68,7 +68,7 @@ const defs: Def[] = [
   { id: 'roux-curry-japonais', name: 'Roux de curry japonais (carré)', aisle: 'placard', unit: 'piece', gramsPerPiece: 18, packages: [12], per100g: m(510, 6, 35, 45), role: 'sauce', pantry: true, trap: 'Roux de curry japonais : 1 carré maximum par portion.' },
   { id: 'bouillon-cube', name: 'Bouillon de volaille (cube)', aisle: 'placard', unit: 'piece', gramsPerPiece: 10, packages: [10], per100g: m(250, 10, 15, 20), role: 'sauce', pantry: true },
   { id: 'fecule-mais', name: 'Fécule de maïs', aisle: 'placard', unit: 'g', packages: [400], per100g: m(350, 0.3, 0.1, 87), role: 'starch', pantry: true },
-  { id: 'huile-neutre', name: 'Huile neutre', aisle: 'placard', unit: 'ml', densityGPerMl: 0.92, packages: [1000], per100g: m(900, 0, 100, 0), role: 'fat', pantry: true, trap: 'Huile : 1 c. à café pour 4 portions.' },
+  { id: 'huile-neutre', name: 'Huile neutre', aisle: 'placard', unit: 'ml', densityGPerMl: 0.92, packages: [1000], per100g: m(900, 0, 100, 0), role: 'fat', pantry: true, trap: 'Huile : mesurer à la cuillère, jamais à l’œil. Repère batch : 1 c. à café pour 4 portions.' },
   { id: 'huile-friture-absorbee', name: 'Huile de friture (absorbée)', aisle: 'placard', unit: 'ml', densityGPerMl: 0.92, packages: [1000], per100g: m(900, 0, 100, 0), role: 'fat', pantry: true, trap: 'Friture : 10 à 15 g d’huile absorbée par portion. Air fryer conseillé.' },
 
   // Épicerie sucrée
