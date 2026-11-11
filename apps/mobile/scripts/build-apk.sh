@@ -27,11 +27,15 @@ trap 'cp "$backup" package.json; rm -f "$backup"' EXIT
 
 EXPO_OFFLINE="${EXPO_OFFLINE:-1}" CI=1 npx expo prebuild --platform android --no-install
 
+# Maven Central limite le débit (HTTP 429) derrière un proxy partagé : peu de parallélisme et reprises longues.
 (
   cd android
   ./gradlew assembleRelease \
     -PreactNativeArchitectures=arm64-v8a \
     -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
+    -Dorg.gradle.internal.repository.max.retries=10 \
+    -Dorg.gradle.internal.repository.initial.backoff=5000 \
+    --max-workers=2 \
     --no-daemon
 )
 
