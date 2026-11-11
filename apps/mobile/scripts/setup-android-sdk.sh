@@ -5,6 +5,16 @@
 set -euo pipefail
 
 : "${ANDROID_HOME:=/root/android-sdk}"
+
+# Le plugin Gradle de React Native exige un JDK 17.
+if ! ls -d /usr/lib/jvm/java-17-openjdk-* >/dev/null 2>&1; then
+  if command -v apt-get >/dev/null 2>&1 && [ "$(id -u)" = 0 ]; then
+    apt-get update -qq && apt-get install -y -qq openjdk-17-jdk-headless
+  else
+    echo "Installer un JDK 17 (openjdk-17-jdk-headless) puis relancer." >&2
+    exit 1
+  fi
+fi
 CMDLINE_TOOLS="commandlinetools-linux-16111833_latest.zip"
 PACKAGES=(platform-tools platforms/android-37.0 build-tools/37.0.0 ndk/27.1.12297006 cmake/3.22.1)
 

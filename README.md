@@ -41,6 +41,14 @@ ANDROID_HOME=/chemin/vers/android-sdk apps/mobile/scripts/build-apk.sh
 L'APK sort dans `apps/mobile/android/app/build/outputs/apk/release/app-release.apk` (arm64-v8a, signé avec la clé de debug du modèle Expo).
 Sur le téléphone : autoriser l'installation depuis la source (navigateur, Fichiers…), puis ouvrir l'APK.
 
+Empreinte SHA-256 du certificat de signature (clé de debug du modèle Expo) :
+`fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`.
+Une nouvelle version ne s'installe par-dessus l'ancienne, sans perte de données, que si cette empreinte est identique
+(vérifier avec `apksigner verify --print-certs`). Sinon Android impose de désinstaller, ce qui efface les données.
+
+Dans un conteneur Claude Code : `apps/mobile/scripts/setup-android-sdk.sh` installe le JDK 17 et le SDK (hôte `dl.google.com` requis),
+et `build-apk.sh` passe par le miroir Google de Maven Central (`scripts/maven-central-mirror.init.gradle`) pour éviter les erreurs 429.
+
 Alternative cloud : EAS Build (`apps/mobile/eas.json`, profil `preview`), avec un compte Expo gratuit.
 
 ## Tests
