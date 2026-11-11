@@ -28,9 +28,17 @@ def preferMirror = { RepositoryHandler repos ->
 }
 
 beforeSettings { settings ->
-  preferMirror(settings.pluginManagement.repositories)
+  redirect(settings.pluginManagement.repositories)
   preferMirror(settings.buildscript.repositories)
   redirect(settings.dependencyResolutionManagement.repositories)
+}
+
+// Après lecture de settings.gradle : si le build n'a déclaré aucun dépôt de plugins, Gradle utiliserait
+// le portail par défaut ; on le déclare explicitement pour ne pas le perdre en ajoutant le miroir.
+settingsEvaluated { settings ->
+  def repos = settings.pluginManagement.repositories
+  if (repos.isEmpty()) repos.gradlePluginPortal()
+  preferMirror(repos)
 }
 
 allprojects { project ->
