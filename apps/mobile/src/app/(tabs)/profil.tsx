@@ -1,8 +1,8 @@
-import { DAY_TEMPLATES, NUTRITION_TARGETS, recipesToMarkdown } from '@olympe/core';
+import { DAY_TEMPLATES, NUTRITION_TARGETS, formatThousands, recipesToMarkdown } from '@olympe/core';
 import { useMemo } from 'react';
-import { Pressable, Share, View } from 'react-native';
+import { Pressable, Share, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Body, Button, Card, Row, Screen, SectionTitle, Title } from '../../components/ui';
+import { Body, Button, Card, Row, Screen, SectionTitle, Stat, text } from '../../components/ui';
 import { INDEX, RECIPES, SLOT_LABEL } from '../../data/catalog';
 import { useData } from '../../data/store';
 import { useTheme } from '../../theme';
@@ -18,8 +18,6 @@ export default function Profil() {
 
   return (
     <Screen>
-      <Title>Profil</Title>
-
       <SectionTitle>Structure de ma journée</SectionTitle>
       {DAY_TEMPLATES.map((tpl) => {
         const selected = tpl.id === templateId;
@@ -31,20 +29,20 @@ export default function Profil() {
             accessibilityState={{ selected }}
             onPress={() => { repos.settings.setDayTemplateId(tpl.id); refresh(); }}
           >
-            <Card style={selected ? { borderColor: t.accent, borderWidth: 1.5 } : undefined}>
+            <Card framed={selected}>
               <Row style={{ flexWrap: 'nowrap' }}>
-                <Ionicons name={selected ? 'radio-button-on' : 'radio-button-off'} size={20} color={selected ? t.accent : t.muted} />
-                <Body bold>{tpl.label}</Body>
+                <Ionicons name={selected ? 'radio-button-on' : 'radio-button-off'} size={20} color={selected ? t.accent : t.faint} />
+                <Body bold style={{ flex: 1 }}>{tpl.label}</Body>
               </Row>
               <View style={{ gap: 2 }}>
                 {tpl.slots.map((s) => (
                   <Row key={s.slot} style={{ justifyContent: 'space-between' }}>
                     <Body muted>{SLOT_LABEL[s.slot]}</Body>
-                    <Body muted>{s.kcal} kcal · {s.protein} g P</Body>
+                    <Text style={[text.number, { color: t.muted }]}>{s.kcal} kcal · {s.protein} g P</Text>
                   </Row>
                 ))}
               </View>
-              <Body>Total : {total} kcal</Body>
+              <Text style={[text.number, { color: selected ? t.accent : t.text, fontWeight: '600' }]}>Total : {formatThousands(total)} kcal</Text>
             </Card>
           </Pressable>
         );
@@ -52,12 +50,12 @@ export default function Profil() {
       <Body muted>Changer de modèle demande de regénérer la semaine pour en tenir compte.</Body>
 
       <SectionTitle>Mes cibles</SectionTitle>
-      <Card>
-        <Row style={{ justifyContent: 'space-between' }}><Body>Calories</Body><Body bold>{NUTRITION_TARGETS.kcalMin} – {NUTRITION_TARGETS.kcalMax} kcal</Body></Row>
-        <Row style={{ justifyContent: 'space-between' }}><Body>Plancher</Body><Body bold>{NUTRITION_TARGETS.kcalFloor} kcal</Body></Row>
-        <Row style={{ justifyContent: 'space-between' }}><Body>Protéines</Body><Body bold>{NUTRITION_TARGETS.proteinG} g</Body></Row>
-        <Body muted>Les calories « brûlées » du Fitbit ne s'ajoutent jamais au budget.</Body>
-      </Card>
+      <Row style={{ flexWrap: 'nowrap', gap: 6 }}>
+        <Stat value={`${formatThousands(NUTRITION_TARGETS.kcalMin)}–${formatThousands(NUTRITION_TARGETS.kcalMax)}`} label="kcal / jour" tone="accent" flex={1.7} />
+        <Stat value={formatThousands(NUTRITION_TARGETS.kcalFloor)} label="Plancher" />
+        <Stat value={String(NUTRITION_TARGETS.proteinG)} unit="g" label="Protéines" />
+      </Row>
+      <Body muted>Les calories « brûlées » du Fitbit ne s'ajoutent jamais au budget.</Body>
 
       <SectionTitle>Mes recettes</SectionTitle>
       <Button label="Exporter en Markdown (Obsidian)" icon="download-outline" variant="secondary" onPress={exportMarkdown} />

@@ -1,9 +1,13 @@
-import { Banner, Body, Card, Screen, Title } from '../../components/ui';
+import { View } from 'react-native';
+import { Emblem } from '../../components/ornaments';
+import { Banner, Body, Card, Screen } from '../../components/ui';
 
 export default function Entrainement() {
   return (
     <Screen>
-      <Title>Entraînement</Title>
+      <View style={{ alignItems: 'center', paddingVertical: 20 }}>
+        <Emblem size={104} dim />
+      </View>
       <Card>
         <Body bold>Bientôt ici</Body>
         <Body muted>
