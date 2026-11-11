@@ -1,8 +1,11 @@
 // Redirige Maven Central vers le miroir officiel de Google.
 // Raison : derrière un proxy partagé, repo.maven.apache.org répond souvent « 429 Too Many Requests »,
-// ce qui fait échouer la résolution des dépendances (Gradle ne bascule pas sur un autre dépôt après un 429).
+// y compris via le portail des plugins Gradle (qui redirige vers Maven Central), et Gradle
+// ne bascule pas sur un autre dépôt après un 429.
 def MIRROR = 'https://maven-central.storage-download.googleapis.com/maven2/'
+def MIRROR_NAME = 'mavenCentralMirror'
 
+// Remplace l'URL de Maven Central par le miroir.
 def redirect = { RepositoryHandler repos ->
   repos.configureEach { repo ->
     if (repo instanceof MavenArtifactRepository) {
@@ -14,13 +17,23 @@ def redirect = { RepositoryHandler repos ->
   }
 }
 
+// Place le miroir en tête : un artefact absent du miroir (marqueur de plugin) renvoie 404 et Gradle passe au suivant.
+def preferMirror = { RepositoryHandler repos ->
+  if (repos.findByName(MIRROR_NAME) == null) {
+    def mirror = repos.maven { name = MIRROR_NAME; url = MIRROR }
+    repos.remove(mirror)
+    repos.addFirst(mirror)
+  }
+  redirect(repos)
+}
+
 beforeSettings { settings ->
-  redirect(settings.pluginManagement.repositories)
+  preferMirror(settings.pluginManagement.repositories)
+  preferMirror(settings.buildscript.repositories)
   redirect(settings.dependencyResolutionManagement.repositories)
-  redirect(settings.buildscript.repositories)
 }
 
 allprojects { project ->
-  redirect(project.buildscript.repositories)
+  preferMirror(project.buildscript.repositories)
   redirect(project.repositories)
 }
