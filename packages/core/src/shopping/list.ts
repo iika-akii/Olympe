@@ -54,7 +54,7 @@ export function buildShoppingList(o: ShoppingOptions): ShoppingItem[] {
     if (!recipe) throw new Error(`Recette inconnue : ${meal.recipeId}`);
     const freeze = o.purchaseDate !== undefined && daysBetween(o.purchaseDate, meal.cookDate ?? meal.date) >= 3;
     for (const eater of meal.eaters) {
-      for (const line of portionFor(recipe, eater, o.index)) {
+      for (const line of portionFor(recipe, eater, o.index, meal.userRoleFactors)) {
         const entry = acc.get(line.ingredientId) ?? { neededGrams: 0, frozenGrams: 0, usedBy: [] };
         entry.neededGrams += line.grams;
         if (freeze && line.role === 'meat') entry.frozenGrams += line.grams;

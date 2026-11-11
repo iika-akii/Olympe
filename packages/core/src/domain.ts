@@ -94,6 +94,8 @@ export interface Recipe {
   maxFridgeDays: number;
   /** §5.5 : khao pad, yakimeshi. */
   needsDayOldRice: boolean;
+  /** Temps total en cuisine, en minutes ([Estimé]). Filtre les dîners de semaine. */
+  minutes: number;
   lines: RecipeLine[];
   steps: string[];
   /** Retours d'expérience (§6). */
@@ -161,13 +163,42 @@ export interface AdaptationResult {
 }
 
 // ───────────────────────── Planification et courses ─────────────────────────
+export type MealKind = 'batch' | 'frais' | 'depannage';
+
 export interface PlannedMeal {
   date: ISODate;
   slot: MealSlot;
   recipeId: string;
   eaters: Eater[];
+  kind?: MealKind;
   /** Jour de cuisson (session de batch). Défaut : `date`. Sert au rappel de congélation (§5.4). */
   cookDate?: ISODate;
+  /** Facteurs du mode « réajuster » appliqués à la portion de l'utilisateur seulement. */
+  userRoleFactors?: Partial<Record<IngredientRole, number>>;
+  /** Macros de la portion de l'utilisateur après réajustement. */
+  userMacros?: Macros;
+}
+
+export interface FreeMeal { date: ISODate; slot: MealSlot }
+export interface BatchSession { date: ISODate; recipeId: string; servings: number; covers: ISODate[] }
+
+export type ReminderKind = 'congeler' | 'decongeler' | 'cuire_riz_veille' | 'batch';
+export interface Reminder { date: ISODate; kind: ReminderKind; text: string }
+
+export interface WeekPlan {
+  /** Jour des courses : début de la semaine planifiée (7 jours). */
+  startDate: ISODate;
+  dates: ISODate[];
+  meals: PlannedMeal[];
+  freeMeals: FreeMeal[];
+  batchSessions: BatchSession[];
+  reminders: Reminder[];
+  shoppingList: ShoppingItem[];
+  /** kcal planifiées par jour (repas libres exclus). */
+  dailyKcal: Record<ISODate, number>;
+  /** Recettes « à tester » servies à la compagne cette semaine. */
+  partnerTests: string[];
+  warnings: string[];
 }
 
 export interface ShoppingUse { date: ISODate; slot: MealSlot; recipeId: string }

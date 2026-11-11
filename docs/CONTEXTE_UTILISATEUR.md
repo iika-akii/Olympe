@@ -114,6 +114,15 @@ Discipline de développement imposée : **headless-first**. Les règles métier,
 
 ## 5. Système de repas (règles métier pour le planificateur)
 
+> **Organisation validée le 11/11/2026.**
+> - Semaine planifiée = du **dimanche des courses au samedi**.
+> - **Batchs pour l'utilisateur seul** (gamelles du travail) : batch A le **dimanche** (midis lundi → mercredi), batch B le **mercredi soir** (jeudi, vendredi).
+> - **Dîners frais à deux** tous les soirs quand la compagne est là, plus le **samedi midi**. **Dimanche midi = repas libre** (plat plaisir, adapté au choix).
+> - Dîners en semaine : **30 min maximum** ; mercredi (soir de batch) : **20 min maximum**.
+> - Compagne : **2 nouvelles recettes « à tester » par semaine au plus**, chacune servie 2 fois au plus ; le plafond n'est dépassé, avec un avertissement, que si aucun plat validé ne permet de remplir la semaine.
+> - Variété : jamais deux repas frais identiques d'affilée ; un même plat au plus 4 fois par semaine, batch compris.
+> - Petit-déjeuner et collation sont des habitudes fixes : ils ne sont pas réajustés.
+
 1. **Midi = batch, soir = cuisine fraîche.**
 2. **Mutualisation des ingrédients** entre batchs et dîners de la même semaine. Exemples : une barquette de poulet de 700-800 g couvre le batch et un ou deux dîners ; un concombre est fini sur deux repas consécutifs. Le planificateur doit minimiser les restes d'ingrédients entamés.
 3. **Riz cuit : 3 jours maximum au frigo.** Une semaine de 5 midis demande donc 2 sessions de batch (ex. dimanche ×3 et mercredi ×3).

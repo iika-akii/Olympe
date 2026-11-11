@@ -75,6 +75,12 @@ Exemples réels (modèle « 2 repas ») :
 
 Prochaine étape [Probable] : combiner un plat plaisir avec un complément protéiné (brownie + skyr-whey) dans le même créneau.
 
+## 4 bis. Planificateur (`planner/week.ts`)
+
+Recherche déterministe : toutes les paires de recettes batch (A ≠ B), puis remplissage glouton des repas frais dans l'ordre chronologique.
+Pour chaque repas frais, les candidats passent des filtres durs (temps, week-end, riz de la veille, verdict « non » de la compagne, 2 fois maximum, 4 occurrences maximum par semaine, pas deux fois d'affilée), puis un ordre de préférence quand la compagne est là : plats validés → plats déjà testés cette semaine → nouveau test sous le plafond → nouveau test au-delà (avertissement).
+À palier égal, on choisit le coût le plus bas : restes d'ingrédients frais entamés (poids réel après arrondi aux conditionnements) + pénalité de répétition. Les portions de l'utilisateur sont réajustées à la cible du créneau ; celles de la compagne restent ⅔ / ½ de la recette d'origine.
+
 ## 5. Modèle de données
 
 Typé dans `packages/core/src/domain.ts`. Unités canoniques g / ml / pièce ; les cuillères sont converties via la densité.
@@ -88,7 +94,7 @@ Typé dans `packages/core/src/domain.ts`. Unités canoniques g / ml / pièce ; l
 |---|---|---|
 | 0 | Planning et courses de la semaine sur tableur, sans app | À faire par l'utilisateur, maintenant |
 | **1** | `packages/core` : domaine, seed (60 ingrédients, 23 recettes), portions, adaptation, exclusions, courses, texte à partager, règles d'ajustement ; 34 tests | **Fait** |
-| 2 | Planificateur hebdo (batch ≤ 3 j, congélation J+3, riz de la veille, ≥ 3 plats, mutualisation, report si courses ratées le dimanche). Dates de présence de la compagne = entrée saisie par l'utilisateur ; portions des plats réajustées au modèle de journée | Suivante |
+| **2** | Planificateur hebdo `planner/week.ts` : dimanche → samedi, batch A dimanche + batch B mercredi (utilisateur seul), dîners frais à deux, samedi midi frais, dimanche midi libre, ≤ 30 min (≤ 20 le mercredi), plafond de recettes à tester, riz de la veille, congélation / décongélation, report des courses au lundi, liste de courses ; 58 tests au total | **Fait** |
 | 3 | App Expo + `packages/db` : onglet Cuisine (plan, recette du jour, courses à cocher, partage), choix du mode d'adaptation, export Markdown | |
 | 3b | Import de recettes : format standard des sites, puis API Claude | Clé API à fournir |
 | 4 | Socle métriques : pesée 1 tap, import Google Takeout, bilan du dimanche, règles d'ajustement | |
