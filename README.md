@@ -31,7 +31,7 @@ pnpm mobile
 
 ## Construire l'APK (installation directe, sans Expo Go)
 
-Prérequis : JDK 17+, Node 22, `pnpm install`, et un SDK Android (`ANDROID_HOME`) avec
+Prérequis : JDK 17 (exactement, exigé par React Native), Node 22, `pnpm install`, et un SDK Android (`ANDROID_HOME`, voir `apps/mobile/scripts/setup-android-sdk.sh`) avec
 `platforms/android-37.0`, `build-tools/37.0.0`, `ndk/27.1.12297006`, `cmake/3.22.1`.
 
 ```bash

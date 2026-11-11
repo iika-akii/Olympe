@@ -4,12 +4,21 @@
 # - signé avec la clé de debug du modèle Expo : installable en « sources inconnues »
 # - architecture arm64-v8a uniquement (tous les téléphones Android récents) pour réduire la taille
 #
-# Prérequis : JDK 17+, Node 22, pnpm install fait, et ANDROID_HOME pointant vers un SDK contenant
+# Prérequis : JDK 17 (exigé par le plugin Gradle de React Native ; JAVA_HOME ou /usr/lib/jvm/java-17-*),
+# Node 22, pnpm install fait, et ANDROID_HOME pointant vers un SDK contenant
 # platforms/android-37.0, build-tools/37.0.0, ndk/27.1.12297006, cmake/3.22.1.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 : "${ANDROID_HOME:?ANDROID_HOME doit pointer vers le SDK Android}"
+
+# Le plugin Gradle de React Native demande une chaîne d'outils Java 17.
+if [ -z "${JAVA_HOME:-}" ] || ! "$JAVA_HOME/bin/java" -version 2>&1 | grep -q 'version "17'; then
+  for candidate in /usr/lib/jvm/java-17-openjdk-*; do
+    [ -x "$candidate/bin/java" ] && export JAVA_HOME="$candidate" && break
+  done
+fi
+"${JAVA_HOME:?JDK 17 introuvable : installer openjdk-17-jdk-headless}/bin/java" -version 2>&1 | grep -q 'version "17' || { echo "JAVA_HOME doit pointer vers un JDK 17" >&2; exit 1; }
 
 # `expo prebuild` réécrit le script "android" de package.json : on le sauvegarde puis on le restaure.
 backup="$(mktemp)"
