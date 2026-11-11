@@ -1,0 +1,26 @@
+// Redirige Maven Central vers le miroir officiel de Google.
+// Raison : derrière un proxy partagé, repo.maven.apache.org répond souvent « 429 Too Many Requests »,
+// ce qui fait échouer la résolution des dépendances (Gradle ne bascule pas sur un autre dépôt après un 429).
+def MIRROR = 'https://maven-central.storage-download.googleapis.com/maven2/'
+
+def redirect = { RepositoryHandler repos ->
+  repos.configureEach { repo ->
+    if (repo instanceof MavenArtifactRepository) {
+      def url = repo.url.toString()
+      if (url.startsWith('https://repo.maven.apache.org/maven2') || url.startsWith('https://repo1.maven.org/maven2')) {
+        repo.url = MIRROR
+      }
+    }
+  }
+}
+
+beforeSettings { settings ->
+  redirect(settings.pluginManagement.repositories)
+  redirect(settings.dependencyResolutionManagement.repositories)
+  redirect(settings.buildscript.repositories)
+}
+
+allprojects { project ->
+  redirect(project.buildscript.repositories)
+  redirect(project.repositories)
+}

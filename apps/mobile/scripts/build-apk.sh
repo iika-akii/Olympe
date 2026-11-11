@@ -31,6 +31,7 @@ EXPO_OFFLINE="${EXPO_OFFLINE:-1}" CI=1 npx expo prebuild --platform android --no
 (
   cd android
   ./gradlew assembleRelease \
+    --init-script ../scripts/maven-central-mirror.init.gradle \
     -PreactNativeArchitectures=arm64-v8a \
     -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
     -Dorg.gradle.internal.repository.max.retries=10 \
