@@ -29,7 +29,19 @@ pnpm mobile
 
 3. Scanner le QR code affiché avec Expo Go.
 
-Sans ordinateur : construire un APK avec EAS (`apps/mobile/eas.json`, profil `preview`), qui demande un compte Expo gratuit.
+## Construire l'APK (installation directe, sans Expo Go)
+
+Prérequis : JDK 17+, Node 22, `pnpm install`, et un SDK Android (`ANDROID_HOME`) avec
+`platforms/android-37.0`, `build-tools/37.0.0`, `ndk/27.1.12297006`, `cmake/3.22.1`.
+
+```bash
+ANDROID_HOME=/chemin/vers/android-sdk apps/mobile/scripts/build-apk.sh
+```
+
+L'APK sort dans `apps/mobile/android/app/build/outputs/apk/release/app-release.apk` (arm64-v8a, signé avec la clé de debug du modèle Expo).
+Sur le téléphone : autoriser l'installation depuis la source (navigateur, Fichiers…), puis ouvrir l'APK.
+
+Alternative cloud : EAS Build (`apps/mobile/eas.json`, profil `preview`), avec un compte Expo gratuit.
 
 ## Tests
 
