@@ -1,10 +1,11 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { addDays, formatDayLong, localISODate, planningWeekStart, type Reminder } from '@olympe/core';
+import { addDays, formatDayLong, localISODate, planningWeekStart, weekdayName, type Reminder } from '@olympe/core';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Text, View } from 'react-native';
+import { Hero } from '../../components/Hero';
 import { FreeMealRow, MealRow } from '../../components/MealRow';
-import { Badge, Body, Button, Card, Row, Screen, SectionTitle, Title, type IconName } from '../../components/ui';
+import { Badge, Body, Button, Card, Row, Screen, SectionTitle, text, type IconName } from '../../components/ui';
 import { SLOT_LABEL, recipeById } from '../../data/catalog';
 import { useData } from '../../data/store';
 import { useTheme } from '../../theme';
@@ -36,7 +37,8 @@ export default function Today() {
     refresh();
   };
 
-  const title = formatDayLong(today);
+  // « mercredi 11 novembre » → sur-titre « Mercredi », titre « 11 novembre ».
+  const dayAndMonth = formatDayLong(today).split(' ').slice(1).join(' ');
   const plan = stored?.plan;
   const meals = plan?.meals.filter((m) => m.date === today) ?? [];
   const free = plan?.freeMeals.filter((f) => f.date === today) ?? [];
@@ -44,14 +46,12 @@ export default function Today() {
   const order = ['petit_dej', 'dejeuner', 'collation', 'diner'] as const;
 
   return (
-    <Screen>
-      <Title>{title.charAt(0).toUpperCase() + title.slice(1)}</Title>
-
+    <Screen hero={<Hero statue="hercule" kicker={weekdayName(today)} title={dayAndMonth} />}>
       {askFeedback && yesterdayDinner && (
-        <Card style={{ borderColor: t.partner }}>
-          <Row>
+        <Card tone="partner">
+          <Row style={{ flexWrap: 'nowrap' }}>
             <Ionicons name="heart-outline" size={18} color={t.partner} />
-            <Body bold>Hier soir : {recipeById(yesterdayDinner.recipeId)?.name}</Body>
+            <Body bold style={{ flex: 1 }}>Hier soir : {recipeById(yesterdayDinner.recipeId)?.name}</Body>
           </Row>
           <Body muted>Elle a aimé ? Sa réponse décide si le plat revient dans les prochains plannings.</Body>
           <Row>
@@ -90,9 +90,9 @@ export default function Today() {
               <SectionTitle>À faire aujourd'hui</SectionTitle>
               <Card>
                 {reminders.map((r, i) => (
-                  <Row key={i} style={{ alignItems: 'flex-start', flexWrap: 'nowrap' }}>
+                  <Row key={i} style={{ alignItems: 'flex-start', flexWrap: 'nowrap', gap: 10 }}>
                     <Ionicons name={REMINDER_ICON[r.kind]} size={18} color={t.accent} style={{ marginTop: 2 }} />
-                    <Text style={{ flex: 1, color: t.text, fontSize: 15, lineHeight: 21 }}>{r.text}</Text>
+                    <Text style={[text.body, { flex: 1, color: t.text }]}>{r.text}</Text>
                   </Row>
                 ))}
               </Card>

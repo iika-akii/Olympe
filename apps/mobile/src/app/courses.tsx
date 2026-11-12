@@ -1,11 +1,10 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { AISLES, AISLE_LABELS, formatShoppingAmount, formatShoppingListText, formatWeekRange } from '@olympe/core';
 import { useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
-import { Body, Button, Card, Row, Screen, SectionTitle } from '../components/ui';
+import { Body, Button, Card, CheckBox, Row, Screen, SectionTitle, text } from '../components/ui';
 import { useData } from '../data/store';
-import { useTheme } from '../theme';
+import { TOUCH, useTheme } from '../theme';
 
 export default function Courses() {
   const { start } = useLocalSearchParams<{ start: string }>();
@@ -33,7 +32,7 @@ export default function Courses() {
     <Screen>
       <Row style={{ justifyContent: 'space-between' }}>
         <Body muted>Semaine {formatWeekRange(start)}</Body>
-        <Body bold>{done} / {items.length}</Body>
+        <Text style={[text.number, { color: t.accent, fontWeight: '600' }]}>{done} / {items.length}</Text>
       </Row>
       <Button label="Envoyer à ma compagne" icon="share-outline" onPress={share} />
 
@@ -54,18 +53,18 @@ export default function Courses() {
                     accessibilityState={{ checked: isChecked }}
                     style={({ pressed }) => [styles.item, pressed && { opacity: 0.6 }]}
                   >
-                    <Ionicons name={isChecked ? 'checkbox' : 'square-outline'} size={24} color={isChecked ? t.accent : t.muted} />
+                    <CheckBox checked={isChecked} />
                     <View style={{ flex: 1, gap: 2 }}>
                       <Row style={{ justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                        <Text style={[styles.name, { color: isChecked ? t.muted : t.text }, isChecked && styles.struck]}>{item.name}</Text>
-                        <Text style={[styles.amount, { color: isChecked ? t.muted : t.text }]}>{formatShoppingAmount(item)}</Text>
+                        <Text style={[text.strong, styles.name, { color: isChecked ? t.faint : t.text }, isChecked && styles.struck]}>{item.name}</Text>
+                        <Text style={[text.number, { color: isChecked ? t.faint : t.text }]}>{formatShoppingAmount(item)}</Text>
                       </Row>
                       {!isChecked && (
-                        <Text style={{ color: t.muted, fontSize: 12 }}>
+                        <Text style={[text.small, { color: t.muted }]}>
                           {item.usedBy.length} repas{item.leftover > 0 && item.packs.length > 0 ? ` · reste ${Math.round(item.leftover)} ${item.unit === 'piece' ? '' : item.unit}` : ''}
                         </Text>
                       )}
-                      {!isChecked && item.notes.map((n) => <Text key={n} style={{ color: t.warn, fontSize: 13 }}>{n}</Text>)}
+                      {!isChecked && item.notes.map((n) => <Text key={n} style={[text.small, { color: t.warn }]}>{n}</Text>)}
                     </View>
                   </Pressable>
                 );
@@ -79,8 +78,7 @@ export default function Courses() {
 }
 
 const styles = StyleSheet.create({
-  item: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 10, minHeight: 48 },
-  name: { fontSize: 15, fontWeight: '600', flex: 1 },
-  amount: { fontSize: 15, fontVariant: ['tabular-nums'] },
+  item: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 10, minHeight: TOUCH },
+  name: { flex: 1 },
   struck: { textDecorationLine: 'line-through' },
 });

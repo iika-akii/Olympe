@@ -1,9 +1,9 @@
-import { Banner, Body, Card, Screen, Title } from '../../components/ui';
+import { Hero } from '../../components/Hero';
+import { Banner, Body, Card, Screen } from '../../components/ui';
 
 export default function Entrainement() {
   return (
-    <Screen>
-      <Title>Entraînement</Title>
+    <Screen hero={<Hero statue="athlete" title="Entraînement" layout="center" />}>
       <Card>
         <Body bold>Bientôt ici</Body>
         <Body muted>

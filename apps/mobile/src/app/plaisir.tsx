@@ -3,7 +3,7 @@ import {
 } from '@olympe/core';
 import { useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
-import { Badge, Banner, Body, Card, Chip, Row, Screen, SectionTitle } from '../components/ui';
+import { Badge, Banner, Body, Card, Chip, Row, Screen, SectionTitle, text } from '../components/ui';
 import { INDEX, RECIPES, SLOT_LABEL, SUBSTITUTIONS, recipeById } from '../data/catalog';
 import { useData } from '../data/store';
 import { useTheme } from '../theme';
@@ -60,7 +60,7 @@ function ResultCard({ title, help, result, accent }: { title: string; help: stri
   return (
     <Card>
       <Row style={{ justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: 17, fontWeight: '700', color: accent }}>{title}</Text>
+        <Text style={[text.heading, { color: accent }]}>{title}</Text>
         <Badge label={`cible ${result.target.kcal} kcal · ${result.target.protein} g P`} />
       </Row>
       <Body muted>{help}</Body>
@@ -94,7 +94,7 @@ function ResultCard({ title, help, result, accent }: { title: string; help: stri
       )}
       {result.notes.map((n) => <Body key={n} muted>{n}</Body>)}
       {result.warnings.map((w) => <Banner key={w}>{w}</Banner>)}
-      {result.warnings.length === 0 && <Text style={{ color: t.accent, fontSize: 13 }}>Dans la cible.</Text>}
+      {result.warnings.length === 0 && <Text style={[text.label, { color: t.accent }]}>Dans la cible</Text>}
     </Card>
   );
 }

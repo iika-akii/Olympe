@@ -1,8 +1,9 @@
 import { DAY_TEMPLATES, NUTRITION_TARGETS, recipesToMarkdown } from '@olympe/core';
 import { useMemo } from 'react';
-import { Pressable, Share, View } from 'react-native';
+import { Pressable, Share, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Body, Button, Card, Row, Screen, SectionTitle, Title } from '../../components/ui';
+import { Hero } from '../../components/Hero';
+import { Body, Button, Card, Row, Screen, SectionTitle, text } from '../../components/ui';
 import { INDEX, RECIPES, SLOT_LABEL } from '../../data/catalog';
 import { useData } from '../../data/store';
 import { useTheme } from '../../theme';
@@ -17,9 +18,7 @@ export default function Profil() {
   };
 
   return (
-    <Screen>
-      <Title>Profil</Title>
-
+    <Screen hero={<Hero statue="ephebe" kicker="Olympe" title="Profil" />}>
       <SectionTitle>Structure de ma journée</SectionTitle>
       {DAY_TEMPLATES.map((tpl) => {
         const selected = tpl.id === templateId;
@@ -31,16 +30,16 @@ export default function Profil() {
             accessibilityState={{ selected }}
             onPress={() => { repos.settings.setDayTemplateId(tpl.id); refresh(); }}
           >
-            <Card style={selected ? { borderColor: t.accent, borderWidth: 1.5 } : undefined}>
+            <Card tone={selected ? 'accent' : undefined}>
               <Row style={{ flexWrap: 'nowrap' }}>
-                <Ionicons name={selected ? 'radio-button-on' : 'radio-button-off'} size={20} color={selected ? t.accent : t.muted} />
-                <Body bold>{tpl.label}</Body>
+                <Ionicons name={selected ? 'radio-button-on' : 'radio-button-off'} size={20} color={selected ? t.accent : t.faint} />
+                <Body bold style={{ flex: 1 }}>{tpl.label}</Body>
               </Row>
               <View style={{ gap: 2 }}>
                 {tpl.slots.map((s) => (
                   <Row key={s.slot} style={{ justifyContent: 'space-between' }}>
                     <Body muted>{SLOT_LABEL[s.slot]}</Body>
-                    <Body muted>{s.kcal} kcal · {s.protein} g P</Body>
+                    <Text style={[text.number, { color: t.muted }]}>{s.kcal} kcal · {s.protein} g P</Text>
                   </Row>
                 ))}
               </View>
@@ -63,6 +62,7 @@ export default function Profil() {
       <Button label="Exporter en Markdown (Obsidian)" icon="download-outline" variant="secondary" onPress={exportMarkdown} />
 
       <Body muted>Données stockées uniquement sur ce téléphone.</Body>
+      <Text style={[text.small, { color: t.faint }]}>Statues : collection Open Access du Metropolitan Museum of Art, domaine public.</Text>
     </Screen>
   );
 }
