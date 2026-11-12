@@ -29,6 +29,29 @@ export const MIGRATIONS: Migration[] = [
       );
     `,
   },
+  {
+    // La présence de la compagne se saisit repas par repas ; suivi du poids et de l'activité.
+    version: 2,
+    sql: `
+      CREATE TABLE partner_meals (
+        date TEXT NOT NULL,
+        slot TEXT NOT NULL CHECK (slot IN ('dejeuner', 'diner')),
+        PRIMARY KEY (date, slot)
+      );
+      -- Ancienne saisie par jour : dîner, plus le déjeuner le samedi.
+      INSERT INTO partner_meals (date, slot) SELECT date, 'diner' FROM partner_dates;
+      INSERT INTO partner_meals (date, slot) SELECT date, 'dejeuner' FROM partner_dates WHERE strftime('%w', date) = '6';
+      DROP TABLE partner_dates;
+      CREATE TABLE weigh_ins (date TEXT PRIMARY KEY NOT NULL, kg REAL NOT NULL);
+      CREATE TABLE daily_health (
+        date TEXT PRIMARY KEY NOT NULL,
+        steps INTEGER,
+        expenditure_kcal INTEGER,
+        sleep_minutes INTEGER,
+        source TEXT NOT NULL CHECK (source IN ('health_connect', 'manual'))
+      );
+    `,
+  },
 ];
 
 export const LATEST_VERSION = MIGRATIONS.at(-1)?.version ?? 0;

@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
-  addDays, formatDayShort, formatWeekRange, localISODate, planningWeekStart, weekDates, weekdayName,
+  addDays, formatDayShort, formatWeekRange, localISODate, planningWeekStart, shareableMeals, weekDates, weekdayName, type PartnerMeal,
 } from '@olympe/core';
 import { generateWeek, isPlanStale } from '@olympe/db';
 import { router } from 'expo-router';
@@ -21,18 +21,29 @@ export default function Cuisine() {
   const [busy, setBusy] = useState(false);
   const dates = weekDates(weekStart);
 
-  const { stored, partnerDates, stale } = useMemo(() => {
+  const { stored, partnerMeals, stale } = useMemo(() => {
     const s = repos.plans.get(weekStart);
     return {
       stored: s,
-      partnerDates: new Set(repos.partner.listBetween(weekStart, addDays(weekStart, 6))),
+      partnerMeals: new Set(repos.partner.listBetween(weekStart, addDays(weekStart, 6)).map((m) => `${m.date}|${m.slot}`)),
       stale: s ? isPlanStale(repos, s) : false,
     };
   }, [repos, weekStart, version]);
 
-  const togglePartner = (date: string) => {
-    repos.partner.setPresent(date, !partnerDates.has(date));
+  // Seuls les repas cuisinés frais se partagent : les midis de semaine sont des gamelles, le dimanche midi est libre.
+  const late = stored ? stored.options.lateShopping : lateShopping;
+  const shareable = new Set(shareableMeals(weekStart, late).map((m) => `${m.date}|${m.slot}`));
+  const sharedCount = [...partnerMeals].filter((k) => shareable.has(k)).length;
+  const togglePartner = (date: string, slot: PartnerMeal['slot']) => {
+    repos.partner.setPresent(date, slot, !partnerMeals.has(`${date}|${slot}`));
     refresh();
+  };
+  const mealChip = (date: string, slot: PartnerMeal['slot'], label: string, index: number) => {
+    const key = `${date}|${slot}`;
+    if (shareable.has(key)) return <Chip grow tone="partner" label={label} selected={partnerMeals.has(key)} onPress={() => togglePartner(date, slot)} />;
+    // Repas non partageable : on dit pourquoi au lieu de le cacher.
+    const reason = slot === 'dejeuner' ? (index === 0 ? 'Midi libre' : 'Gamelle') : 'Soir libre';
+    return <Chip grow disabled tone="partner" label={reason} selected={false} onPress={() => undefined} />;
   };
 
   const generate = () => {
@@ -62,7 +73,7 @@ export default function Cuisine() {
   const plan = stored?.plan;
 
   return (
-    <Screen hero={<Hero statue="dionysos" kicker="Cuisine" title="Ma semaine" />}>
+    <Screen hero={<Hero engraving="bacchus" kicker="Cuisine" title="Ma semaine" />}>
       <View style={styles.weekNav}>
         <Pressable accessibilityRole="button" accessibilityLabel="Semaine précédente" onPress={() => setWeekStart(addDays(weekStart, -7))} style={[styles.navButton, { borderColor: t.borderStrong }]}>
           <Ionicons name="chevron-back" size={22} color={t.accent} />
@@ -76,14 +87,22 @@ export default function Cuisine() {
         </Pressable>
       </View>
 
-      <SectionTitle>Ma compagne mange avec moi</SectionTitle>
+      <SectionTitle>Repas avec ma compagne</SectionTitle>
       <Card>
-        <Row>
-          {dates.map((d) => (
-            <Chip key={d} tone="partner" label={formatDayShort(d).split(' ').slice(0, 2).join(' ')} selected={partnerDates.has(d)} onPress={() => togglePartner(d)} />
+        <Body bold>
+          {sharedCount === 0 ? 'Aucun repas à deux cette semaine' : sharedCount === 1 ? '1 repas à deux cette semaine' : `${sharedCount} repas à deux cette semaine`}
+        </Body>
+        <Body muted>Coche chaque repas qu'elle prend avec toi.</Body>
+        <View style={{ gap: 6 }}>
+          {dates.map((d, i) => (
+            <View key={d} style={styles.partnerRow} accessibilityLabel={formatDayShort(d)}>
+              <Text style={[text.label, styles.partnerDay, { color: t.text }]}>{formatDayShort(d).split(' ').slice(0, 2).join(' ')}</Text>
+              {mealChip(d, 'dejeuner', 'Midi', i)}
+              {mealChip(d, 'diner', 'Soir', i)}
+            </View>
           ))}
-        </Row>
-        <Body muted>Dîners, et samedi midi. Les midis de semaine (batch) sont pour toi seul.</Body>
+        </View>
+        <Body muted>Tes midis du lundi au vendredi sont des gamelles de batch, pour toi seul.</Body>
       </Card>
 
       {!plan && (
@@ -93,7 +112,7 @@ export default function Cuisine() {
               <Body bold>Courses ratées dimanche matin</Body>
               <Body muted>Courses lundi soir : lundi midi en dépannage, batch décalé.</Body>
             </View>
-            <Switch value={lateShopping} onValueChange={setLateShopping} trackColor={{ false: t.borderStrong, true: t.accentDeep }} thumbColor={lateShopping ? t.accentBright : t.muted} />
+            <Switch value={lateShopping} onValueChange={setLateShopping} trackColor={{ false: t.borderStrong, true: t.accent }} thumbColor={t.card} />
           </Row>
           {busy ? <ActivityIndicator color={t.accent} /> : <Button label="Générer la semaine" icon="sparkles-outline" onPress={generate} />}
         </Card>
@@ -103,7 +122,7 @@ export default function Cuisine() {
         <>
           {stale && (
             <Banner tone="partner" icon="people-outline">
-              Les jours de ta compagne ou le modèle de journée ont changé depuis la génération. Regénère pour en tenir compte.
+              Les repas de ta compagne ou le modèle de journée ont changé depuis la génération. Regénère pour en tenir compte.
             </Banner>
           )}
           {plan.warnings.map((w, i) => <Banner key={i}>{w}</Banner>)}
@@ -161,4 +180,6 @@ const styles = StyleSheet.create({
   weekNav: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   navButton: { width: TOUCH, height: TOUCH, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderRadius: radius.md },
   batch: { minHeight: TOUCH, justifyContent: 'center' },
+  partnerRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  partnerDay: { width: 62 },
 });

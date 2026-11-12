@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { Hero } from '../../components/Hero';
 import { FreeMealRow, MealRow } from '../../components/MealRow';
+import { WeighInCard } from '../../components/WeighInCard';
 import { Badge, Body, Button, Card, Row, Screen, SectionTitle, text, type IconName } from '../../components/ui';
 import { SLOT_LABEL, recipeById } from '../../data/catalog';
 import { useData } from '../../data/store';
@@ -46,7 +47,7 @@ export default function Today() {
   const order = ['petit_dej', 'dejeuner', 'collation', 'diner'] as const;
 
   return (
-    <Screen hero={<Hero statue="hercule" kicker={weekdayName(today)} title={dayAndMonth} />}>
+    <Screen hero={<Hero engraving="adam" kicker={weekdayName(today)} title={dayAndMonth} />}>
       {askFeedback && yesterdayDinner && (
         <Card tone="partner">
           <Row style={{ flexWrap: 'nowrap' }}>
@@ -60,6 +61,9 @@ export default function Today() {
           </Row>
         </Card>
       )}
+
+      <SectionTitle>Pesée du matin</SectionTitle>
+      <WeighInCard onOpenTracking={() => router.push('/suivi')} />
 
       {!plan && (
         <Card>

@@ -3,7 +3,7 @@ import { Banner, Body, Card, Screen } from '../../components/ui';
 
 export default function Entrainement() {
   return (
-    <Screen hero={<Hero statue="athlete" title="Entraînement" layout="center" />}>
+    <Screen hero={<Hero engraving="hercule" kicker="Olympe" title="Entraînement" />}>
       <Card>
         <Body bold>Bientôt ici</Body>
         <Body muted>

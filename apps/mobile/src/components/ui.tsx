@@ -3,21 +3,20 @@
  * Les écrans n'écrivent ni couleur ni police en dur.
  */
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { LinearGradient } from 'expo-linear-gradient';
 import type { ComponentProps, ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { TOUCH, fonts, gradients, radius, useTheme, type Theme } from '../theme';
+import { TOUCH, fonts, radius, useTheme, type Theme } from '../theme';
 
 export type IconName = ComponentProps<typeof Ionicons>['name'];
 
-/** `hero` : en-tête pleine largeur (statue), posé avant le contenu et qui défile avec lui. */
+/** `hero` : en-tête pleine largeur (gravure), posé avant le contenu et qui défile avec lui. */
 export function Screen({ children, hero }: { children: ReactNode; hero?: ReactNode }) {
   const t = useTheme();
   return (
     <ScrollView style={{ flex: 1, backgroundColor: t.bg }} keyboardShouldPersistTaps="handled">
       {hero}
-      <View style={[styles.screen, hero ? { paddingTop: 4 } : null]}>{children}</View>
+      <View style={[styles.screen, hero ? { paddingTop: 8 } : null]}>{children}</View>
     </ScrollView>
   );
 }
@@ -37,7 +36,7 @@ export function Card({
   );
 }
 
-/** Titre d'écran sans statue (écrans empilés) : la seule ligne en gothique. */
+/** Titre d'écran sans gravure (écrans empilés), en gothique. */
 export function Title({ children }: { children: ReactNode }) {
   const t = useTheme();
   return <Text accessibilityRole="header" style={[styles.title, { color: t.text }]}>{children}</Text>;
@@ -71,10 +70,10 @@ export function Body({ children, muted, bold, style }: { children: ReactNode; mu
 export type Tone = 'accent' | 'partner' | 'warn' | 'danger' | 'muted';
 function toneColors(t: Theme, tone: Tone) {
   switch (tone) {
-    case 'accent': return { fg: t.accent, bg: t.accentSoft };
-    case 'partner': return { fg: t.partner, bg: t.partnerSoft };
-    case 'warn': return { fg: t.warn, bg: t.warnSoft };
-    case 'danger': return { fg: t.danger, bg: t.dangerSoft };
+    case 'accent': return { fg: t.accentDeep, bg: t.accentSoft };
+    case 'partner': return { fg: t.onInk, bg: t.ink };
+    case 'warn': return { fg: t.accentDeep, bg: t.warnSoft };
+    case 'danger': return { fg: t.accentDeep, bg: t.dangerSoft };
     case 'muted': return { fg: t.muted, bg: t.raised };
   }
 }
@@ -102,35 +101,43 @@ export function Button({
   label, onPress, variant = 'primary', icon, disabled,
 }: { label: string; onPress: () => void; variant?: 'primary' | 'secondary' | 'danger'; icon?: IconName; disabled?: boolean }) {
   const t = useTheme();
-  const fg = variant === 'primary' ? t.onAccent : variant === 'danger' ? t.danger : t.text;
-  const border = variant === 'primary' ? t.accent : variant === 'danger' ? t.danger : t.borderStrong;
+  const fg = variant === 'primary' ? t.onInk : variant === 'danger' ? t.danger : t.text;
+  const border = variant === 'danger' ? t.danger : t.ink;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ disabled: !!disabled }}
       disabled={disabled}
       onPress={onPress}
-      style={({ pressed }) => [styles.button, { borderColor: border, backgroundColor: variant === 'primary' ? t.accent : 'transparent' }, pressed && styles.pressed, disabled && styles.disabled]}
+      style={({ pressed }) => [styles.button, { borderColor: border, backgroundColor: variant === 'primary' ? t.ink : 'transparent' }, pressed && styles.pressed, disabled && styles.disabled]}
     >
-      {variant === 'primary' && <LinearGradient colors={gradients.braise} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />}
       {icon && <Ionicons name={icon} size={18} color={fg} />}
       <Text style={[styles.buttonText, { color: fg }]}>{label}</Text>
     </Pressable>
   );
 }
 
-export function Chip({ label, selected, onPress, tone = 'accent' }: { label: string; selected: boolean; onPress: () => void; tone?: 'accent' | 'partner' }) {
+/**
+ * Puce à cocher. `tone="partner"` : aplat d'encre quand elle est cochée (présence de la compagne).
+ * `grow` : occupe toute la largeur disponible. `disabled` : affichée mais inerte.
+ */
+export function Chip({
+  label, selected, onPress, tone = 'accent', disabled, grow,
+}: { label: string; selected: boolean; onPress: () => void; tone?: 'accent' | 'partner'; disabled?: boolean; grow?: boolean }) {
   const t = useTheme();
-  const active = tone === 'partner' ? t.partner : t.accent;
-  const soft = tone === 'partner' ? t.partnerSoft : t.accentSoft;
+  const solid = tone === 'partner';
+  const border = disabled ? t.border : selected ? (solid ? t.ink : t.accent) : t.borderStrong;
+  const bg = disabled ? 'transparent' : selected ? (solid ? t.ink : t.accentSoft) : 'transparent';
+  const fg = disabled ? t.faint : selected ? (solid ? t.onInk : t.accentDeep) : t.muted;
   return (
     <Pressable
       accessibilityRole="checkbox"
-      accessibilityState={{ checked: selected }}
+      accessibilityState={{ checked: selected, disabled: !!disabled }}
+      disabled={disabled}
       onPress={onPress}
-      style={({ pressed }) => [styles.chip, { borderColor: selected ? active : t.borderStrong, backgroundColor: selected ? soft : 'transparent' }, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.chip, grow && styles.chipGrow, { borderColor: border, backgroundColor: bg }, pressed && styles.pressed]}
     >
-      <Text style={[styles.chipText, { color: selected ? active : t.muted }]}>{label}</Text>
+      <Text style={[styles.chipText, { color: fg }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -139,7 +146,88 @@ export function CheckBox({ checked }: { checked: boolean }) {
   const t = useTheme();
   return (
     <View style={[styles.checkbox, { borderColor: checked ? t.accent : t.borderStrong, backgroundColor: checked ? t.accent : 'transparent' }]}>
-      {checked && <Ionicons name="checkmark" size={16} color={t.onAccent} />}
+      {checked && <Ionicons name="checkmark" size={16} color={t.onInk} />}
+    </View>
+  );
+}
+
+/** Chiffre clé avec son libellé. */
+export function Stat({ value, unit, label, tone }: { value: string; unit?: string; label: string; tone?: 'accent' }) {
+  const t = useTheme();
+  return (
+    <View style={[styles.stat, { borderColor: t.border, backgroundColor: t.card }]}>
+      <Text numberOfLines={1} style={[styles.statValue, { color: tone === 'accent' ? t.accent : t.text }]}>
+        {value}
+        {unit ? <Text style={[styles.statUnit, { color: t.muted }]}> {unit}</Text> : null}
+      </Text>
+      <Text style={[text.label, { color: t.muted, fontSize: 12 }]}>{label}</Text>
+    </View>
+  );
+}
+
+/** Saisie d'un nombre avec boutons moins et plus : une main suffit. La valeur se tape aussi au clavier. */
+export function Stepper({
+  value, onChange, step, unit, label, decimals = 1, min = 0,
+}: { value: number; onChange: (v: number) => void; step: number; unit: string; label: string; decimals?: number; min?: number }) {
+  const t = useTheme();
+  const f = 10 ** decimals;
+  const clamp = (v: number) => Math.max(min, Math.round(v * f) / f);
+  const shown = value.toFixed(decimals).replace('.', ',');
+  const side = (icon: IconName, delta: number, a11y: string) => (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={a11y}
+      onPress={() => onChange(clamp(value + delta))}
+      style={({ pressed }) => [styles.stepButton, { borderColor: t.ink }, pressed && styles.pressed]}
+    >
+      <Ionicons name={icon} size={20} color={t.text} />
+    </Pressable>
+  );
+  return (
+    <View style={styles.stepper}>
+      {side('remove', -step, `${label} : moins ${step}`)}
+      <View style={[styles.stepField, { borderColor: t.border, backgroundColor: t.card }]}>
+        <TextInput
+          accessibilityLabel={label}
+          key={shown}
+          defaultValue={shown}
+          keyboardType="decimal-pad"
+          selectTextOnFocus
+          onEndEditing={(e) => {
+            const parsed = Number(e.nativeEvent.text.replace(',', '.'));
+            if (Number.isFinite(parsed) && parsed > 0) onChange(clamp(parsed));
+          }}
+          style={[styles.stepValue, { color: t.text }]}
+        />
+        <Text style={[text.body, { color: t.muted }]}>{unit}</Text>
+      </View>
+      {side('add', step, `${label} : plus ${step}`)}
+    </View>
+  );
+}
+
+/** Champ de saisie d'un nombre entier, avec son libellé. */
+export function NumberField({ label, value, onChange, unit }: { label: string; value: number | undefined; onChange: (v: number | undefined) => void; unit: string }) {
+  const t = useTheme();
+  return (
+    <View style={{ flex: 1, gap: 4 }}>
+      <Text style={[text.label, { color: t.muted }]}>{label}</Text>
+      <View style={[styles.field, { borderColor: t.borderStrong, backgroundColor: t.card }]}>
+        <TextInput
+          accessibilityLabel={label}
+          key={String(value)}
+          defaultValue={value === undefined ? '' : String(value)}
+          placeholder="—"
+          placeholderTextColor={t.faint}
+          keyboardType="number-pad"
+          onEndEditing={(e) => {
+            const raw = e.nativeEvent.text.replace(/[^0-9]/g, '');
+            onChange(raw === '' ? undefined : Number(raw));
+          }}
+          style={[styles.fieldInput, { color: t.text }]}
+        />
+        <Text style={[text.small, { color: t.muted }]}>{unit}</Text>
+      </View>
     </View>
   );
 }
@@ -182,7 +270,17 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.72 },
   disabled: { opacity: 0.4 },
   chip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: radius.md, borderWidth: 1, minHeight: 40, justifyContent: 'center' },
-  chipText: { fontFamily: fonts.text, fontWeight: '600', fontSize: 14, lineHeight: 20 },
+  chipText: { fontFamily: fonts.text, fontWeight: '600', fontSize: 14, lineHeight: 20, textAlign: 'center' },
+  chipGrow: { flex: 1, alignItems: 'center' },
+  stat: { flex: 1, minWidth: 96, borderWidth: 1, borderRadius: radius.sm, paddingVertical: 10, paddingHorizontal: 8, alignItems: 'center', gap: 2 },
+  statValue: { fontFamily: fonts.text, fontWeight: '600', fontSize: 22, lineHeight: 26, fontVariant: ['tabular-nums'] },
+  statUnit: { fontFamily: fonts.text, fontWeight: '400', fontSize: 13 },
+  stepper: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  stepButton: { width: TOUCH, height: TOUCH, borderWidth: 1, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center' },
+  stepField: { flex: 1, flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', gap: 6, borderWidth: 1, borderRadius: radius.md, minHeight: TOUCH, paddingHorizontal: 10 },
+  stepValue: { fontFamily: fonts.text, fontWeight: '600', fontSize: 24, minWidth: 76, textAlign: 'right', paddingVertical: 8, fontVariant: ['tabular-nums'] },
+  field: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: radius.md, minHeight: TOUCH, paddingHorizontal: 12 },
+  fieldInput: { flex: 1, minWidth: 0, fontFamily: fonts.text, fontWeight: '500', fontSize: 18, paddingVertical: 8, fontVariant: ['tabular-nums'] },
   checkbox: { width: 22, height: 22, borderWidth: 1.5, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
 });

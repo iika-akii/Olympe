@@ -4,6 +4,7 @@ export * from './dates';
 export * from './format';
 export * from './nutrition/macros';
 export * from './nutrition/adjust';
+export * from './tracking/progress';
 export * from './recipes/portions';
 export * from './recipes/adapt';
 export * from './recipes/exclusions';

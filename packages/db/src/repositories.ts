@@ -1,5 +1,6 @@
 import {
-  DEFAULT_DAY_TEMPLATE_ID, SEED_RATINGS, type ISODate, type PartnerVerdict, type RecipeRating, type WeekPlan,
+  DEFAULT_DAY_TEMPLATE_ID, DEFAULT_GOAL_KG, SEED_RATINGS,
+  type DailyHealth, type ISODate, type PartnerMeal, type PartnerVerdict, type RecipeRating, type WeekPlan, type WeighIn,
 } from '@olympe/core';
 import type { SqlDriver } from './driver';
 
@@ -10,17 +11,64 @@ export function settingsRepo(db: SqlDriver) {
   return {
     getDayTemplateId: (): string => get('day_template_id') ?? DEFAULT_DAY_TEMPLATE_ID,
     setDayTemplateId: (id: string) => set('day_template_id', id),
+    getGoalKg: (): number => Number(get('goal_kg') ?? DEFAULT_GOAL_KG),
+    setGoalKg: (kg: number) => set('goal_kg', String(kg)),
   };
 }
 
-// ───────── Jours où la compagne mange avec l'utilisateur
+// ───────── Repas que la compagne prend avec l'utilisateur
 export function partnerRepo(db: SqlDriver) {
   return {
-    listBetween: (from: ISODate, to: ISODate): ISODate[] =>
-      db.all<{ date: string }>('SELECT date FROM partner_dates WHERE date >= ? AND date <= ? ORDER BY date', [from, to]).map((r) => r.date),
-    setPresent: (date: ISODate, present: boolean) => {
-      if (present) db.run('INSERT OR IGNORE INTO partner_dates (date) VALUES (?)', [date]);
-      else db.run('DELETE FROM partner_dates WHERE date = ?', [date]);
+    listBetween: (from: ISODate, to: ISODate): PartnerMeal[] =>
+      db.all<PartnerMeal>('SELECT date, slot FROM partner_meals WHERE date >= ? AND date <= ? ORDER BY date, slot', [from, to]),
+    setPresent: (date: ISODate, slot: PartnerMeal['slot'], present: boolean) => {
+      if (present) db.run('INSERT OR IGNORE INTO partner_meals (date, slot) VALUES (?, ?)', [date, slot]);
+      else db.run('DELETE FROM partner_meals WHERE date = ? AND slot = ?', [date, slot]);
+    },
+  };
+}
+
+// ───────── Pesées du matin
+export function weighInsRepo(db: SqlDriver) {
+  return {
+    all: (): WeighIn[] => db.all<WeighIn>('SELECT date, kg FROM weigh_ins ORDER BY date'),
+    get: (date: ISODate): WeighIn | null => db.all<WeighIn>('SELECT date, kg FROM weigh_ins WHERE date = ?', [date])[0] ?? null,
+    set: (w: WeighIn) => db.run('INSERT INTO weigh_ins (date, kg) VALUES (?, ?) ON CONFLICT(date) DO UPDATE SET kg = excluded.kg', [w.date, w.kg]),
+    remove: (date: ISODate) => db.run('DELETE FROM weigh_ins WHERE date = ?', [date]),
+  };
+}
+
+// ───────── Activité du jour (pas, dépense du bracelet)
+interface HealthRow { date: string; steps: number | null; expenditure_kcal: number | null; sleep_minutes: number | null; source: DailyHealth['source'] }
+const healthFromRow = (r: HealthRow): DailyHealth => ({
+  date: r.date,
+  source: r.source,
+  ...(r.steps === null ? {} : { steps: r.steps }),
+  ...(r.expenditure_kcal === null ? {} : { expenditureKcal: r.expenditure_kcal }),
+  ...(r.sleep_minutes === null ? {} : { sleepMinutes: r.sleep_minutes }),
+});
+
+export function healthRepo(db: SqlDriver) {
+  const get = (date: ISODate): DailyHealth | null => {
+    const row = db.all<HealthRow>('SELECT * FROM daily_health WHERE date = ?', [date])[0];
+    return row ? healthFromRow(row) : null;
+  };
+  return {
+    get,
+    listBetween: (from: ISODate, to: ISODate): DailyHealth[] =>
+      db.all<HealthRow>('SELECT * FROM daily_health WHERE date >= ? AND date <= ? ORDER BY date', [from, to]).map(healthFromRow),
+    /** Remplace la ligne du jour. Une ligne sans aucune valeur est supprimée. */
+    set: (h: DailyHealth) => {
+      if (h.steps === undefined && h.expenditureKcal === undefined && h.sleepMinutes === undefined) {
+        db.run('DELETE FROM daily_health WHERE date = ?', [h.date]);
+        return;
+      }
+      db.run(
+        `INSERT INTO daily_health (date, steps, expenditure_kcal, sleep_minutes, source) VALUES (?, ?, ?, ?, ?)
+         ON CONFLICT(date) DO UPDATE SET steps = excluded.steps, expenditure_kcal = excluded.expenditure_kcal,
+           sleep_minutes = excluded.sleep_minutes, source = excluded.source`,
+        [h.date, h.steps ?? null, h.expenditureKcal ?? null, h.sleepMinutes ?? null, h.source],
+      );
     },
   };
 }
@@ -61,7 +109,8 @@ export function ratingsRepo(db: SqlDriver) {
 }
 
 // ───────── Plans de semaine
-export interface PlanGenerationOptions { partnerDates: ISODate[]; lateShopping: boolean; dayTemplateId: string }
+/** `partnerDates` : ancien format (présence par jour), encore présent dans les plans générés avant la saisie par repas. */
+export interface PlanGenerationOptions { partnerMeals?: PartnerMeal[]; partnerDates?: ISODate[]; lateShopping: boolean; dayTemplateId: string }
 export interface StoredPlan { plan: WeekPlan; options: PlanGenerationOptions; generatedAt: string }
 
 export function plansRepo(db: SqlDriver) {
@@ -96,6 +145,9 @@ export function shoppingRepo(db: SqlDriver) {
 }
 
 export function createRepositories(db: SqlDriver) {
-  return { settings: settingsRepo(db), partner: partnerRepo(db), ratings: ratingsRepo(db), plans: plansRepo(db), shopping: shoppingRepo(db) };
+  return {
+    settings: settingsRepo(db), partner: partnerRepo(db), ratings: ratingsRepo(db), plans: plansRepo(db), shopping: shoppingRepo(db),
+    weighIns: weighInsRepo(db), health: healthRepo(db),
+  };
 }
 export type Repositories = ReturnType<typeof createRepositories>;

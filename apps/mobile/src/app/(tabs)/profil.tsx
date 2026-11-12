@@ -1,5 +1,6 @@
 import { DAY_TEMPLATES, NUTRITION_TARGETS, recipesToMarkdown } from '@olympe/core';
 import { useMemo } from 'react';
+import { router } from 'expo-router';
 import { Pressable, Share, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Hero } from '../../components/Hero';
@@ -18,7 +19,10 @@ export default function Profil() {
   };
 
   return (
-    <Screen hero={<Hero statue="ephebe" kicker="Olympe" title="Profil" />}>
+    <Screen hero={<Hero engraving="ange" kicker="Olympe" title="Profil" />}>
+      <SectionTitle>Mon suivi</SectionTitle>
+      <Button label="Poids, objectif, activité" icon="trending-down-outline" onPress={() => router.push('/suivi')} />
+
       <SectionTitle>Structure de ma journée</SectionTitle>
       {DAY_TEMPLATES.map((tpl) => {
         const selected = tpl.id === templateId;
@@ -62,7 +66,7 @@ export default function Profil() {
       <Button label="Exporter en Markdown (Obsidian)" icon="download-outline" variant="secondary" onPress={exportMarkdown} />
 
       <Body muted>Données stockées uniquement sur ce téléphone.</Body>
-      <Text style={[text.small, { color: t.faint }]}>Statues : collection Open Access du Metropolitan Museum of Art, domaine public.</Text>
+      <Text style={[text.small, { color: t.faint }]}>Gravures : Metropolitan Museum of Art (Open Access) et Wikimedia Commons, domaine public.</Text>
     </Screen>
   );
 }

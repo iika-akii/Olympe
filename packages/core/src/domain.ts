@@ -122,6 +122,9 @@ export const PARTNER_RATIO: Record<IngredientRole, number> = {
   sauce: 2 / 3, fat: 2 / 3, sweet: 2 / 3, other: 2 / 3,
 };
 
+/** Un repas que la compagne prend avec l'utilisateur : la présence se saisit repas par repas, pas par jour. */
+export interface PartnerMeal { date: ISODate; slot: 'dejeuner' | 'diner' }
+
 export type PartnerVerdict = 'oui' | 'non' | 'a_tester';
 export interface RecipeRating { recipeId: string; userLiked?: boolean; partnerVerdict: PartnerVerdict; note?: string; updatedAt: string }
 
@@ -218,7 +221,8 @@ export interface ShoppingItem {
 
 // ───────────────────────── Suivi ─────────────────────────
 export interface WeighIn { date: ISODate; kg: number }
-export interface DailyHealth { date: ISODate; steps?: number; sleepMinutes?: number; source: 'health_connect' | 'manual' }
+/** `expenditureKcal` : dépense totale affichée par le bracelet. Indicative : elle n'entre jamais dans le budget (§2). */
+export interface DailyHealth { date: ISODate; steps?: number; expenditureKcal?: number; sleepMinutes?: number; source: 'health_connect' | 'manual' }
 
 export type AdjustmentAction = 'hold' | 'lower' | 'raise' | 'insufficient_data';
 export interface AdjustmentDecision {

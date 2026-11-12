@@ -1,13 +1,13 @@
-import { ActivityIndicator, Image, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { useTheme } from '../theme';
-import { STATUES } from './Hero';
+import { Engraving } from './Hero';
 
 /** Écran d'attente (polices, base de données). Aucune police personnalisée ici : elles ne sont pas encore chargées. */
 export function Splash() {
   const t = useTheme();
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 28, backgroundColor: t.bg }}>
-      <Image source={STATUES.zeus.source} resizeMode="contain" accessible={false} style={{ width: 200 * STATUES.zeus.ratio, height: 200 }} />
+      <Engraving name="phaeton" width={240} height={240} />
       <ActivityIndicator color={t.accent} />
     </View>
   );

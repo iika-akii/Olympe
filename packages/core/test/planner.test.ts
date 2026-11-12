@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  DAY_TEMPLATES, DEFAULT_DAY_TEMPLATE_ID, NUTRITION_TARGETS, RECIPES, SEED_RATINGS, addDays, planWeek,
+  DAY_TEMPLATES, DEFAULT_DAY_TEMPLATE_ID, NUTRITION_TARGETS, RECIPES, SEED_RATINGS, addDays, partnerMealsFromDates, planWeek, shareableMeals,
   type PlannerOptions, type RecipeRating,
 } from '../src';
 import { index, recipe } from './fixtures';
@@ -11,7 +11,7 @@ const [d0, d1, d2, d3, d4, d5, d6] = WEEK as [string, string, string, string, st
 const template = DAY_TEMPLATES.find((t) => t.id === DEFAULT_DAY_TEMPLATE_ID)!;
 
 const base: PlannerOptions = {
-  startDate: SUNDAY, recipes: RECIPES, index, ratings: SEED_RATINGS, partnerDates: WEEK,
+  startDate: SUNDAY, recipes: RECIPES, index, ratings: SEED_RATINGS, partnerMeals: partnerMealsFromDates(WEEK),
   dayTemplate: template, kcalFloor: NUTRITION_TARGETS.kcalFloor,
 };
 const withVerdicts = (verdicts: Record<string, RecipeRating['partnerVerdict']>): RecipeRating[] =>
@@ -81,7 +81,7 @@ describe('dîners', () => {
   });
 
   it('les dîners sont à deux les jours où la compagne est là, seul sinon', () => {
-    const p = planWeek({ ...base, partnerDates: [d1, d2] });
+    const p = planWeek({ ...base, partnerMeals: partnerMealsFromDates([d1, d2]) });
     for (const m of fresh(p)) expect(m.eaters).toEqual([d1, d2].includes(m.date) ? ['user', 'partner'] : ['user']);
   });
 });
@@ -103,7 +103,7 @@ describe('recettes à faire goûter à la compagne', () => {
   });
 
   it('compagne absente : aucun test, aucun avertissement de plafond', () => {
-    const p = planWeek({ ...base, partnerDates: [] });
+    const p = planWeek({ ...base, partnerMeals: [] });
     expect(p.partnerTests).toEqual([]);
     expect(p.warnings.some((w) => w.includes('Plafond'))).toBe(false);
   });
@@ -168,5 +168,39 @@ describe('liste de courses de la semaine', () => {
     expect(p.shoppingList.find((i) => i.ingredientId === 'banane')!.toBuy).toBe(7);
     expect(p.shoppingList.find((i) => i.ingredientId === 'sauce-soja')).toBeUndefined();
     expect(p.shoppingList.find((i) => i.ingredientId === 'riz-thai')).toBeUndefined();
+  });
+});
+
+describe('repas partagés avec la compagne, repas par repas', () => {
+  it('samedi : elle peut être là le midi sans être là le soir', () => {
+    const p = planWeek({ ...base, partnerMeals: [{ date: d6, slot: 'dejeuner' }] });
+    const lunch = p.meals.find((m) => m.date === d6 && m.slot === 'dejeuner')!;
+    const dinner = p.meals.find((m) => m.date === d6 && m.slot === 'diner')!;
+    expect(lunch.eaters).toEqual(['user', 'partner']);
+    expect(dinner.eaters).toEqual(['user']);
+  });
+
+  it('un seul dîner à deux dans la semaine : tous les autres repas sont pour l’utilisateur seul', () => {
+    const p = planWeek({ ...base, partnerMeals: [{ date: d2, slot: 'diner' }] });
+    const shared = p.meals.filter((m) => m.eaters.includes('partner'));
+    expect(shared.map((m) => `${m.date}|${m.slot}`)).toEqual([`${d2}|diner`]);
+  });
+
+  it('un midi de semaine coché ne change rien : les gamelles de batch restent pour l’utilisateur seul', () => {
+    const p = planWeek({ ...base, partnerMeals: [{ date: d2, slot: 'dejeuner' }] });
+    expect(p.meals.some((m) => m.eaters.includes('partner'))).toBe(false);
+  });
+
+  it('repas partageables : 7 dîners et le samedi midi ; 6 dîners si les courses sont décalées', () => {
+    expect(shareableMeals(SUNDAY)).toHaveLength(8);
+    expect(shareableMeals(SUNDAY).filter((m) => m.slot === 'dejeuner')).toEqual([{ date: d6, slot: 'dejeuner' }]);
+    expect(shareableMeals(SUNDAY, true)).toHaveLength(7);
+    expect(shareableMeals(SUNDAY, true).some((m) => m.date === d0)).toBe(false);
+  });
+
+  it('l’ancienne saisie par jour se convertit : dîner, plus le déjeuner le samedi', () => {
+    expect(partnerMealsFromDates([d1, d6])).toEqual([
+      { date: d1, slot: 'diner' }, { date: d6, slot: 'dejeuner' }, { date: d6, slot: 'diner' },
+    ]);
   });
 });

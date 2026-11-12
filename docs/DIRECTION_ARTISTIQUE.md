@@ -1,48 +1,41 @@
-# Olympe : direction artistique « Palestre »
+# Olympe : direction artistique « Gravure »
 
-> 12 novembre 2026 · Tokens : `apps/mobile/src/theme/tokens.ts` · En-tête à statue : `apps/mobile/src/components/Hero.tsx` · Primitives : `apps/mobile/src/components/ui.tsx`
+> 12 novembre 2026 · Tokens : `apps/mobile/src/theme/tokens.ts` · En-tête gravé : `apps/mobile/src/components/Hero.tsx` · Primitives : `apps/mobile/src/components/ui.tsx`
 
 ## Idée
 
-La palestre des héros : des **corps sculptés de la statuaire grecque** sortent de l'ombre, éclairés par une braise. Le grec porte l'image (marbre, bronze, athlètes, dieux). Le néo-gothique vient par-dessus, en trois touches seulement : l'arc brisé derrière chaque statue, la lettre gothique des titres, le quadrilobe des titres de section.
+Un livre de mythologie gravé : des corps de héros et de dieux tracés à l'encre, au trait qui enfle et s'amincit comme une calligraphie ou un tatouage, sur un papier clair. La lettre gothique des titres et le quadrilobe des sections apportent la touche néo-gothique. Rien d'autre.
 
-La DA habille l'app, elle n'y ajoute rien : aucun chiffre, aucune fonction, et pour tout texte une ligne de crédit des statues en bas de l'onglet Profil.
+## Trois couleurs, pas une de plus
 
-## Statues
-
-Une par onglet, en tête d'écran. Aucune sur les écrans de travail (recette, courses, plat plaisir).
-
-| Écran | Statue | Œuvre (Metropolitan Museum of Art, objet n°) |
+| Couleur | Valeur | Rôle |
 |---|---|---|
-| Olympe (aujourd'hui) | Hercule jeune | Statue en marbre d'un Hercule juvénile, 69–96 apr. J.-C. (247000) |
-| Entraînement | Torse d'athlète | Torse en marbre d'un jeune homme, v. 118–161 apr. J.-C. (250556) |
-| Forger | Torse de bronze | Torse en bronze d'un jeune homme, 1re moitié du Ve s. av. J.-C. (250947) |
-| Cuisine | Dionysos | Statue en marbre de Dionysos, Ier–IIe s. apr. J.-C. (256879) |
-| Profil | Éphèbe | Tête en marbre d'un athlète, v. 138–192 apr. J.-C. (248579) |
-| Icône, attente | Zeus | Tête en marbre de Zeus Ammon, v. 120–160 apr. J.-C. (257864) |
+| **Papier** (dominante) | `#F4EFE6` · cartes `#FBF8F2` · ombre `#E8E1D4` · filet `#D3CABA` | Fond, cartes, bordures |
+| **Encre** | `#17130F` · voilée `#5B5348` · pâle `#988F82` | Texte, gravures, bouton principal, repas cochés pour la compagne |
+| **Rouge sang** | `#B3122B` · sombre `#8A0E21` · pâle `#F2DCD9` | Le seul rehaut : onglet actif, sur-titres, sélection, jour en cours, alertes, courbe du poids |
 
-- Source : collection **Open Access** du Met, images en domaine public (CC0). Une ligne de crédit figure dans l'onglet Profil.
-- Traitement : détourage, cadrage au-dessus du bassin, couleur à moitié retirée pour unifier les marbres, fondu vers le bas (`apps/mobile/scripts/prepare-statues.py`).
-- Ajouter une statue : la détourer, l'ajouter à la liste du script, puis à `STATUES` dans `Hero.tsx`.
+- Pas de quatrième teinte : ce qui concerne la compagne se dit par un aplat d'encre, une alerte par le rouge et une icône.
+- Contrastes sur le papier : encre 16:1, encre voilée 6,6:1, rouge 6,3:1. L'encre pâle ne sert jamais à un texte à lire.
 
-## Couleurs
+## Gravures
 
-Thème unique, sombre. Les écrans n'utilisent que les rôles.
+Une par onglet, en tête d'écran. Aucune sur les écrans de travail (recette, courses, plat plaisir, suivi).
 
-| Matière | Valeur | Rôle |
-|---|---|---|
-| Nuit | `#0B0A09` | Fond |
-| Pierre / pierre claire | `#161412` / `#221F1B` | Cartes, surface pressée |
-| Joint / joint fort | `#2E2A25` / `#4D463D` | Bordures, contours des contrôles |
-| Marbre | `#F2ECE1` | Texte principal |
-| Marbre voilé | `#ADA598` | Texte secondaire |
-| Marbre d'ombre | `#70695F` | Décor, icônes inactives. Jamais un texte à lire |
-| **Braise** | `#FF6B3D` (claire `#FFB46E`, sombre `#A8371C`) | Accent : action, sélection, halo des statues |
-| Égée | `#8CC4FF` | Ce qui concerne ta compagne |
-| Ambre | `#F5C451` | Avertissements |
-| Carmin | `#FF5D7A` | Danger, action destructive |
+| Écran | Image | Œuvre | Source |
+|---|---|---|---|
+| Olympe (aujourd'hui), icône | Les deux mains | Michel-Ange, *La Création d'Adam*, v. 1511, chapelle Sixtine | Wikimedia Commons |
+| Entraînement | Le Grand Hercule | Hendrick Goltzius, *The Great Hercules*, 1589 | Met, objet 343586 |
+| Forger | La forge | Cornelis Bos, *The Forge of Vulcan*, 1546 | Met, objet 399871 |
+| Cuisine | Bacchus | Hendrick Goltzius, *Bacchus* | Met, objet 373160 |
+| Profil | L'ange déchu | Alexandre Cabanel, *L'Ange déchu*, 1847 | Wikimedia Commons |
+| Écran d'attente | La chute de Phaéton | Hendrick Goltzius, *Phaeton*, des « Quatre Disgraciés », 1588 | Met, objet 343581 |
 
-Une seule couleur chaude domine : la braise. Le bleu d'Égée est réservé à ta compagne, pour qu'on la repère sans lire.
+- Toutes les œuvres sont dans le domaine public ; les images du Met sont sous licence CC0 (Open Access).
+- Deux traitements (`apps/mobile/scripts/prepare-engravings.py`) :
+  - une vraie gravure est débarrassée de son papier, on ne garde que le trait ;
+  - une peinture est **regravée** : tailles croisées dont l'épaisseur suit l'ombre, contours cernés.
+- Chaque image est en « encre seule » (noir + transparence). L'app la teinte à la couleur d'encre du thème : changer la palette ne demande pas de refaire les images.
+- Ajouter une image : déposer l'original, ajouter une ligne à `JOBS` dans le script, puis à `ENGRAVINGS` dans `Hero.tsx`.
 
 ## Typographie
 
@@ -54,14 +47,15 @@ Une seule couleur chaude domine : la braise. Le bleu d'Égée est réservé à t
 
 ## Formes
 
-| Motif | Origine | Où |
-|---|---|---|
-| Arc brisé en lancette, double trait | Néo-gothique | Derrière chaque statue, sur l'icône |
-| Halo de braise | Torche, feu sacré | Derrière chaque statue |
-| Quadrilobe | Remplage gothique | Devant chaque titre de section |
-| Angles presque vifs (3 à 5 px) | Pierre taillée | Cartes, boutons, cases |
+| Motif | Où |
+|---|---|
+| Gravure qui s'efface dans le papier, titre gothique qui mord dessus | En tête de chaque onglet |
+| Quadrilobe rouge (remplage gothique) | Devant chaque titre de section |
+| Aplat d'encre | Bouton principal, repas coché pour la compagne |
+| Angles presque vifs (3 à 5 px), filets fins | Cartes, boutons, cases |
 
 ## Limites connues
 
 - Rendu vérifié sur l'export web (412 × 915) seulement ; à confirmer sur ton téléphone avec l'APK.
-- Pas de thème clair, pas d'animation.
+- Sur *L'Ange déchu*, le regard est petit dans le cadrage : c'est la chevelure et le bras qui portent l'image.
+- Pas de thème sombre, pas d'animation.

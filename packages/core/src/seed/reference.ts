@@ -4,6 +4,10 @@ import { RECIPES } from './recipes';
 /** Cibles du §2. Le levier d'ajustement est désormais les féculents. */
 export const NUTRITION_TARGETS: NutritionTargets = { kcalMin: 2100, kcalMax: 2200, kcalFloor: 1900, proteinG: 180, fatG: 65 };
 
+/** Objectif de poids du §1 (modifiable dans l'app) et poids de départ. */
+export const DEFAULT_GOAL_KG = 85;
+export const START_WEIGHT_KG = 100;
+
 /** Deux structures de journée au choix ([Estimé], ~2 150 kcal / ~180 g P). */
 export const DAY_TEMPLATES: DayTemplate[] = [
   {

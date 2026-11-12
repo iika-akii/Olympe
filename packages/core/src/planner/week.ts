@@ -1,5 +1,5 @@
 import type {
-  BatchSession, DayTemplate, Eater, FreeMeal, ISODate, IngredientRole, Macros, MealSlot, PlannedMeal, Recipe,
+  BatchSession, DayTemplate, Eater, FreeMeal, ISODate, IngredientRole, Macros, MealSlot, PartnerMeal, PlannedMeal, Recipe,
   RecipeRating, Reminder, SlotTarget, WeekPlan,
 } from '../domain';
 import { getIngredient, type IngredientIndex } from '../nutrition/macros';
@@ -27,8 +27,8 @@ export interface PlannerOptions {
   recipes: readonly Recipe[];
   index: IngredientIndex;
   ratings: readonly RecipeRating[];
-  /** Jours où la compagne mange avec l'utilisateur (dîner, et samedi midi). Saisis par l'utilisateur. */
-  partnerDates: readonly ISODate[];
+  /** Repas que la compagne prend avec l'utilisateur, saisis repas par repas. Seuls les repas cuisinés frais sont concernés. */
+  partnerMeals: readonly PartnerMeal[];
   dayTemplate: DayTemplate;
   kcalFloor: number;
   pantryInStock?: ReadonlySet<string>;
@@ -56,6 +56,25 @@ const MAX_WEEKLY_OCCURRENCES = 4;
 interface FreshSlot { date: ISODate; slot: MealSlot; maxMinutes: number; weekend: boolean; partner: boolean }
 interface Adapted { factors: Partial<Record<IngredientRole, number>>; macros: Macros }
 
+/**
+ * Repas de la semaine que la compagne peut partager : ceux qui sont cuisinés frais.
+ * Les midis du lundi au vendredi sont des gamelles de batch pour l'utilisateur seul ; le dimanche midi est libre.
+ */
+export function shareableMeals(startDate: ISODate, lateShopping = false): PartnerMeal[] {
+  const out: PartnerMeal[] = [];
+  for (let i = 0; i < 7; i++) {
+    const date = addDays(startDate, i);
+    if (i === 6) out.push({ date, slot: 'dejeuner' });
+    if (!(i === 0 && lateShopping)) out.push({ date, slot: 'diner' });
+  }
+  return out;
+}
+
+/** Ancienne saisie « par jour » : la compagne est là au dîner, et au déjeuner le samedi. */
+export function partnerMealsFromDates(dates: readonly ISODate[]): PartnerMeal[] {
+  return dates.flatMap((date): PartnerMeal[] => (weekday(date) === 6 ? [{ date, slot: 'dejeuner' }, { date, slot: 'diner' }] : [{ date, slot: 'diner' }]));
+}
+
 export function planWeek(o: PlannerOptions): WeekPlan {
   const start = o.startDate;
   if (weekday(start) !== 0) throw new Error(`La semaine commence le dimanche des courses : ${start} n'est pas un dimanche.`);
@@ -77,7 +96,7 @@ export function planWeek(o: PlannerOptions): WeekPlan {
     return r;
   };
   const rating = new Map(o.ratings.map((r) => [r.recipeId, r]));
-  const partnerDates = new Set(o.partnerDates);
+  const partnerMeals = new Set(o.partnerMeals.map((m) => `${m.date}|${m.slot}`));
   const dates = Array.from({ length: 7 }, (_, i) => addDays(start, i));
   const [d0, d1, d2, d3, d4, d5, d6] = dates as [ISODate, ISODate, ISODate, ISODate, ISODate, ISODate, ISODate];
   const shoppingDate = o.lateShopping ? d1 : d0;
@@ -122,7 +141,7 @@ export function planWeek(o: PlannerOptions): WeekPlan {
   // ── Créneaux frais.
   const fresh: FreshSlot[] = [];
   const pushFresh = (date: ISODate, slot: MealSlot, maxMinutes: number, weekend = false) =>
-    fresh.push({ date, slot, maxMinutes, weekend, partner: partnerDates.has(date) });
+    fresh.push({ date, slot, maxMinutes, weekend, partner: partnerMeals.has(`${date}|${slot}`) });
   if (!o.lateShopping) pushFresh(d0, 'diner', cfg.weekdayMinutes);
   pushFresh(d1, 'diner', cfg.weekdayMinutes);
   pushFresh(d2, 'diner', cfg.weekdayMinutes);
