@@ -15,7 +15,7 @@ Un livre de mythologie gravé : des corps de héros et de dieux tracés à l'enc
 | **Rouge sang** | `#B3122B` · sombre `#8A0E21` · pâle `#F2DCD9` | Le seul rehaut : onglet actif, sur-titres, sélection, jour en cours, alertes, courbe du poids |
 
 - Pas de quatrième teinte : ce qui concerne la compagne se dit par un aplat d'encre, une alerte par le rouge et une icône.
-- Contrastes sur le papier : encre 16:1, encre voilée 6,6:1, rouge 6,3:1. L'encre pâle ne sert jamais à un texte à lire.
+- Contrastes sur le papier : encre 16:1, encre voilée 6,6:1, rouge 6,0:1. L'encre pâle ne sert jamais à un texte à lire.
 
 ## Gravures
 
