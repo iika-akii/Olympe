@@ -1,6 +1,6 @@
 # Olympe : architecture
 
-> Mise à jour : 11 novembre 2026 · Règles métier : `docs/CONTEXTE_UTILISATEUR.md` · Direction artistique : `docs/DIRECTION_ARTISTIQUE.md`
+> Mise à jour : 9 novembre 2026 · Règles métier : `docs/CONTEXTE_UTILISATEUR.md`
 > Légende : **[Certain]** preuve concrète · **[Probable]** déduction forte · **[Incertain]** hypothèse à valider
 
 ---
@@ -43,8 +43,6 @@
 | Levier calorique | **Féculents** | La collation seule ne pouvait retirer que 70 kcal |
 | Journée | 2 modèles stockés comme données ; **défaut : 3 repas** (petit-déj banane + whey 230 kcal, repas 750, collation 400) | Choix de l'utilisateur. Les plats diète sont réajustés de ~650 à ~750 kcal |
 | Logique | **Headless-first** : toute règle dans `packages/core`, fonctions pures testées | Imposé |
-| Interface | **Un seul thème, sombre** (« Temple de nuit »), porté par des tokens et des primitives ; aucun écran ne code une couleur ou une police en dur | Une DA forte ne survit pas à deux thèmes entretenus par une personne. Changer la palette = modifier un fichier |
-| Polices | Cinzel + Jost, chargées à l'exécution par `expo-font` | Seul mode compatible Expo Go ; le plugin de build les embarquera quand l'app passera en *development build* |
 
 ## 3. Vue d'ensemble
 
@@ -58,34 +56,8 @@ packages/db  (pilote SqlDriver, migrations, repositories, génération de semain
 packages/core  (TypeScript pur, sans React / Expo / base)                                 [tranche 1 ✔]
    domain.ts · units · nutrition (macros, ajustement) · recipes (portions, adaptation, exclusions)
    shopping (liste, texte à partager) · seed (ingrédients, recettes, substitutions, modèles de journée)
-   planner ✔ (semaine, résumé du jour) · dates, formats, vue des portions, export Markdown ✔ · training [tranche 6] · tracking [tranche 4]
+   planner ✔ · dates, vue des portions, export Markdown ✔ · training [tranche 6] · tracking [tranche 4]
 ```
-
-## 3 bis. Architecture de l'app (`apps/mobile/src`)
-
-**[Certain]** Quatre couches, chacune ne connaît que celle du dessous. C'est la même discipline que le *headless-first*, appliquée à l'interface : la règle vit dans `core`, l'apparence vit dans `theme` et `components`, l'écran ne fait qu'assembler.
-
-```
-app/            Écrans (Expo Router). Lisent les données, appellent core, assemblent des composants.
-  _layout.tsx        polices → base de données → pile de navigation (thème sombre)
-  (tabs)/            5 onglets : Olympe (aujourd'hui), Entraînement, Forger, Cuisine, Profil
-  recette/[id] · courses · plaisir      écrans empilés au-dessus des onglets
-components/     Composants métier : DayHero (bloc du jour), MealRow. Aucun calcul : ils affichent un résultat de core.
-  ui.tsx             Primitives : Screen, Card, Title, SectionTitle, Body, Stat, Progress, Badge, Banner, Button, Chip, CheckBox…
-  ornaments.tsx      Motifs SVG : Niche (ogive), Laurel, DayRing, Meander, Rule, CornerFrame, Emblem
-theme/          tokens.ts (matières, rôles, dégradés, polices, rayons) · fonts.ts · useTheme()
-data/           store.tsx (SQLite + repositories, compteur `version` pour relire après écriture) · catalog.ts (seed indexé) · maxims.ts
-```
-
-| Règle | Conséquence |
-|---|---|
-| Un écran n'importe ni code couleur ni nom de police | Toute la DA se change dans `theme/tokens.ts` |
-| Un calcul affiché à l'écran vient de `packages/core` | Le bloc du jour lit `daySummary()` (testé), il ne recalcule rien |
-| Les ornements sont décoratifs | Ils sont masqués aux lecteurs d'écran ; l'information est toujours aussi dans un texte |
-| Un seul bloc « encadré » (équerres d'or) par écran | Il désigne ce qu'il faut regarder en premier |
-| Cible tactile ≥ 48 px, texte courant ≥ 16 px | Usage à une main, en cuisine et en rayon |
-
-État de l'app : lectures SQLite synchrones dans les écrans, relancées par `version`. **[Probable]** Suffisant tant qu'il y a un seul utilisateur et quelques milliers de lignes ; à revoir seulement si un écran devient lent (aucune mesure ne le montre aujourd'hui).
 
 ## 4. Moteur d'adaptation (`recipes/adapt.ts`)
 
@@ -124,7 +96,6 @@ Typé dans `packages/core/src/domain.ts`. Unités canoniques g / ml / pièce ; l
 | **1** | `packages/core` : domaine, seed (60 ingrédients, 23 recettes), portions, adaptation, exclusions, courses, texte à partager, règles d'ajustement ; 34 tests | **Fait** |
 | **2** | Planificateur hebdo `planner/week.ts` : dimanche → samedi, batch A dimanche + batch B mercredi (utilisateur seul), dîners frais à deux, samedi midi frais, dimanche midi libre, ≤ 30 min (≤ 20 le mercredi), plafond de recettes à tester, riz de la veille, congélation / décongélation, report des courses au lundi, liste de courses ; 58 tests au total | **Fait** |
 | **3** | App Expo SDK 58 (compatible Expo Go) + `packages/db` : Aujourd'hui (repas, rappels, « elle a aimé ? »), Cuisine (jours de la compagne, génération, semaine), fiche recette (portions toi / elle, batch, verdicts), courses à cocher + partage, plats plaisir (3 modes), Profil (modèle de journée, export Markdown) | **Fait** |
-| **3c** | Direction artistique « Temple de nuit » : tokens, primitives, ornements SVG, bloc du jour (`daySummary`), icône et écran de lancement ; 83 tests au total | **Fait** |
 | 3b | Import de recettes : format standard des sites, puis API Claude | Clé API à fournir |
 | 4 | Socle métriques : pesée 1 tap, import Google Takeout, bilan du dimanche, règles d'ajustement | |
 | 5 | Health Connect (pas, sommeil total) | |
@@ -140,7 +111,6 @@ Données nutritionnelles : valeurs **[Estimé]** à remplacer par la table **CIQ
 | Retour de la compagne = choc de goûts | Note « plaît à la compagne » dès la tranche 3 |
 | Données nutritionnelles à ±10 % | On juge sur la balance (moyenne hebdo), pas sur les kcal calculées |
 | Saisie quotidienne trop lourde | Seules saisies quotidiennes : pesée + « hors plan oui / non » |
-| La DA prend le pas sur l'usage (décor qui ralentit la lecture) | Ornements limités à un bloc par écran ; libellés en français courant ; chiffres en Jost, jamais en Cinzel |
 | Clé API Claude stockée sur le téléphone | Usage perso, stockage chiffré (`expo-secure-store`), plafond de dépense côté console Anthropic |
 
 ## Sources

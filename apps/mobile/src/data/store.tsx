@@ -1,8 +1,7 @@
 import { createRepositories, migrate, type Repositories, type SqlDriver } from '@olympe/db';
 import { openDatabaseAsync, openDatabaseSync } from 'expo-sqlite';
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { Platform } from 'react-native';
-import { Splash } from '../components/Splash';
+import { ActivityIndicator, Platform, View } from 'react-native';
 
 interface DataContextValue {
   db: SqlDriver;
@@ -44,7 +43,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
     return () => { cancelled = true; };
   }, [state]);
 
-  if (!state) return <Splash />;
+  if (!state) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
   return <DataContext.Provider value={{ ...state, version, refresh }}>{children}</DataContext.Provider>;
 }
 

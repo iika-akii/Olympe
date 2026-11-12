@@ -1,14 +1,14 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
-  formatDayLong, formatRoman, formatThousands, planningWeekStart, portionView, recipeMacros, type MealSlot, type PartnerVerdict, type PortionViewLine,
+  formatDayLong, planningWeekStart, portionView, recipeMacros, type MealSlot, type PartnerVerdict, type PortionViewLine,
 } from '@olympe/core';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Badge, Banner, Body, Card, Chip, Divider, Row, Screen, SectionTitle, Stat, Title, text } from '../../components/ui';
+import { Badge, Banner, Body, Card, Chip, Divider, Row, Screen, SectionTitle, Title } from '../../components/ui';
 import { INDEX, SLOT_LABEL, VERDICT_LABEL, recipeById } from '../../data/catalog';
 import { useData } from '../../data/store';
-import { fonts, useTheme } from '../../theme';
+import { useTheme } from '../../theme';
 
 export default function RecipeScreen() {
   const { id, date, slot } = useLocalSearchParams<{ id: string; date?: string; slot?: MealSlot }>();
@@ -44,6 +44,7 @@ export default function RecipeScreen() {
 
   return (
     <Screen>
+      <Stack.Screen options={{ title: recipe.name }} />
       <Title>{recipe.name}</Title>
       <Row>
         <Badge label={`${recipe.minutes} min`} />
@@ -57,15 +58,11 @@ export default function RecipeScreen() {
         </Body>
       )}
 
-      <Row style={{ flexWrap: 'nowrap', gap: 6 }}>
-        <Stat value={formatThousands(macros.kcal)} label="kcal" tone="accent" />
-        <Stat value={String(Math.round(macros.protein))} unit="g" label="Protéines" />
-        <Stat value={String(Math.round(macros.fat))} unit="g" label="Lipides" />
-        <Stat value={String(Math.round(macros.carbs))} unit="g" label="Glucides" />
-      </Row>
-
-      <Card framed>
-        <Body bold>Ta portion</Body>
+      <Card>
+        <Row style={{ justifyContent: 'space-between' }}>
+          <Body bold>Ta portion</Body>
+          <Body muted>{Math.round(macros.kcal)} kcal · {Math.round(macros.protein)} g P · {Math.round(macros.fat)} g L · {Math.round(macros.carbs)} g G</Body>
+        </Row>
         <QuantityTable lines={lines} withPartner={withPartner} />
         {meal?.userRoleFactors && Object.values(meal.userRoleFactors).some((f) => f !== 1) && (
           <Body muted>Quantités réajustées à ta cible de {SLOT_LABEL[meal.slot].toLowerCase()}. La portion de ta compagne reste celle de la recette (⅔, ½ pour la viande).</Body>
@@ -90,8 +87,8 @@ export default function RecipeScreen() {
           <SectionTitle>Étapes</SectionTitle>
           <Card>
             {recipe.steps.map((s, i) => (
-              <Row key={i} style={{ alignItems: 'flex-start', flexWrap: 'nowrap', gap: 10 }}>
-                <Text accessibilityLabel={`Étape ${i + 1}`} style={[styles.step, { color: t.accent }]}>{formatRoman(i + 1)}</Text>
+              <Row key={i} style={{ alignItems: 'flex-start', flexWrap: 'nowrap' }}>
+                <Text style={[styles.step, { color: t.accent }]}>{i + 1}</Text>
                 <Body style={{ flex: 1 }}>{s}</Body>
               </Row>
             ))}
@@ -102,14 +99,7 @@ export default function RecipeScreen() {
       {recipe.lessons.length > 0 && (
         <>
           <SectionTitle>Retours d'expérience</SectionTitle>
-          <Card>
-            {recipe.lessons.map((s, i) => (
-              <Row key={i} style={{ alignItems: 'flex-start', flexWrap: 'nowrap', gap: 10 }}>
-                <View style={[styles.lessonMark, { backgroundColor: t.accent }]} />
-                <Body style={{ flex: 1 }}>{s}</Body>
-              </Row>
-            ))}
-          </Card>
+          <Card>{recipe.lessons.map((s, i) => <Body key={i}>• {s}</Body>)}</Card>
         </>
       )}
 
@@ -137,9 +127,9 @@ function QuantityTable({ lines, withPartner }: { lines: PortionViewLine[]; withP
     <View>
       {withPartner && (
         <View style={styles.qRow}>
-          <Text style={styles.qName} />
-          <Text style={[text.label, styles.qHead, { color: t.accent }]}>Toi</Text>
-          <Text style={[text.label, styles.qHead, { color: t.partner }]}>Elle</Text>
+          <Text style={[styles.qName, { color: t.muted }]} />
+          <Text style={[styles.qVal, { color: t.muted }]}>Toi</Text>
+          <Text style={[styles.qVal, { color: t.partner }]}>Elle</Text>
         </View>
       )}
       {lines.map((l) => (
@@ -157,10 +147,8 @@ function QuantityTable({ lines, withPartner }: { lines: PortionViewLine[]; withP
 }
 
 const styles = StyleSheet.create({
-  step: { width: 30, fontFamily: fonts.display, fontWeight: '700', fontSize: 14, lineHeight: 22, letterSpacing: 0.5 },
-  lessonMark: { width: 5, height: 5, marginTop: 9, transform: [{ rotate: '45deg' }] },
-  qRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 7, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'transparent', gap: 8 },
-  qName: { flex: 1, fontFamily: fonts.text, fontWeight: '400', fontSize: 16, lineHeight: 22 },
-  qVal: { width: 92, textAlign: 'right', fontFamily: fonts.text, fontWeight: '500', fontSize: 16, lineHeight: 22, fontVariant: ['tabular-nums'] },
-  qHead: { width: 92, textAlign: 'right' },
+  step: { width: 20, fontSize: 15, fontWeight: '700', lineHeight: 21 },
+  qRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 6, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'transparent', gap: 8 },
+  qName: { flex: 1, fontSize: 15 },
+  qVal: { width: 92, textAlign: 'right', fontSize: 15, fontVariant: ['tabular-nums'] },
 });

@@ -15,4 +15,3 @@ export { INGREDIENTS } from './seed/ingredients';
 export { RECIPES } from './seed/recipes';
 export * from './seed/reference';
 export * from './planner/week';
-export * from './planner/day';

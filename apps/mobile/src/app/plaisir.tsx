@@ -3,10 +3,10 @@ import {
 } from '@olympe/core';
 import { useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
-import { Badge, Banner, Body, Card, Chip, Row, Screen, SectionTitle, text } from '../components/ui';
+import { Badge, Banner, Body, Card, Chip, Row, Screen, SectionTitle } from '../components/ui';
 import { INDEX, RECIPES, SLOT_LABEL, SUBSTITUTIONS, recipeById } from '../data/catalog';
 import { useData } from '../data/store';
-import { fonts, useTheme } from '../theme';
+import { useTheme } from '../theme';
 
 const MODES: { mode: AdaptationMode; title: string; help: string }[] = [
   { mode: 'reajuster', title: 'Réajuster', help: 'Mêmes ingrédients, quantités revues pour ta cible.' },
@@ -60,16 +60,16 @@ function ResultCard({ title, help, result, accent }: { title: string; help: stri
   return (
     <Card>
       <Row style={{ justifyContent: 'space-between' }}>
-        <Text style={{ fontFamily: fonts.display, fontWeight: '700', fontSize: 17, lineHeight: 24, letterSpacing: 1.2, color: accent }}>{title}</Text>
+        <Text style={{ fontSize: 17, fontWeight: '700', color: accent }}>{title}</Text>
         <Badge label={`cible ${result.target.kcal} kcal · ${result.target.protein} g P`} />
       </Row>
       <Body muted>{help}</Body>
-      <Row style={{ gap: 6 }}>
-        <Text style={[text.number, { color: t.muted }]}>{result.before.kcal} →</Text>
-        <Text style={[text.number, { color: t.text, fontWeight: '600' }]}>{result.after.kcal} kcal</Text>
-        <Text style={[text.number, { color: t.faint }]}>·</Text>
-        <Text style={[text.number, { color: t.muted }]}>{Math.round(result.before.protein)} →</Text>
-        <Text style={[text.number, { color: t.text, fontWeight: '600' }]}>{Math.round(result.after.protein)} g P</Text>
+      <Row>
+        <Body>{result.before.kcal} → </Body>
+        <Body bold>{result.after.kcal} kcal</Body>
+        <Body muted>·</Body>
+        <Body>{Math.round(result.before.protein)} → </Body>
+        <Body bold>{Math.round(result.after.protein)} g P</Body>
       </Row>
       {result.appliedSubstitutions.length > 0 && <Body>{result.appliedSubstitutions.join(' · ')}</Body>}
       {result.mode !== 'compenser' && changed.length > 0 && (
@@ -94,7 +94,7 @@ function ResultCard({ title, help, result, accent }: { title: string; help: stri
       )}
       {result.notes.map((n) => <Body key={n} muted>{n}</Body>)}
       {result.warnings.map((w) => <Banner key={w}>{w}</Banner>)}
-      {result.warnings.length === 0 && <Text style={[text.label, { color: t.accent }]}>Dans la cible</Text>}
+      {result.warnings.length === 0 && <Text style={{ color: t.accent, fontSize: 13 }}>Dans la cible.</Text>}
     </Card>
   );
 }

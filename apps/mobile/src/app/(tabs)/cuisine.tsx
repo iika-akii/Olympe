@@ -7,10 +7,10 @@ import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Platform, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import { FreeMealRow, MealRow } from '../../components/MealRow';
-import { Badge, Banner, Body, Button, Card, Chip, Row, Screen, SectionTitle, inscription, text } from '../../components/ui';
+import { Badge, Banner, Body, Button, Card, Chip, Row, Screen, SectionTitle } from '../../components/ui';
 import { recipeById } from '../../data/catalog';
 import { useData } from '../../data/store';
-import { TOUCH, fonts, useTheme } from '../../theme';
+import { useTheme } from '../../theme';
 
 export default function Cuisine() {
   const { db, repos, version, refresh } = useData();
@@ -63,15 +63,15 @@ export default function Cuisine() {
   return (
     <Screen>
       <View style={styles.weekNav}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Semaine précédente" onPress={() => setWeekStart(addDays(weekStart, -7))} style={[styles.navButton, { borderColor: t.borderStrong }]}>
-          <Ionicons name="chevron-back" size={22} color={t.accent} />
+        <Pressable accessibilityLabel="Semaine précédente" onPress={() => setWeekStart(addDays(weekStart, -7))} style={styles.navButton}>
+          <Ionicons name="chevron-back" size={22} color={t.text} />
         </Pressable>
         <View style={{ alignItems: 'center', flex: 1 }}>
-          <Text style={[text.label, { color: t.accent }]}>Semaine</Text>
-          <Text style={[styles.weekRange, { color: t.text }]}>{inscription(formatWeekRange(weekStart))}</Text>
+          <Text style={{ color: t.muted, fontSize: 13 }}>Semaine</Text>
+          <Text style={{ color: t.text, fontSize: 17, fontWeight: '700' }}>{formatWeekRange(weekStart)}</Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel="Semaine suivante" onPress={() => setWeekStart(addDays(weekStart, 7))} style={[styles.navButton, { borderColor: t.borderStrong }]}>
-          <Ionicons name="chevron-forward" size={22} color={t.accent} />
+        <Pressable accessibilityLabel="Semaine suivante" onPress={() => setWeekStart(addDays(weekStart, 7))} style={styles.navButton}>
+          <Ionicons name="chevron-forward" size={22} color={t.text} />
         </Pressable>
       </View>
 
@@ -86,13 +86,13 @@ export default function Cuisine() {
       </Card>
 
       {!plan && (
-        <Card framed>
+        <Card>
           <Row style={{ justifyContent: 'space-between', flexWrap: 'nowrap' }}>
             <View style={{ flex: 1 }}>
               <Body bold>Courses ratées dimanche matin</Body>
               <Body muted>Courses lundi soir : lundi midi en dépannage, batch décalé.</Body>
             </View>
-            <Switch value={lateShopping} onValueChange={setLateShopping} trackColor={{ false: t.borderStrong, true: t.accentDeep }} thumbColor={lateShopping ? t.accentBright : t.muted} />
+            <Switch value={lateShopping} onValueChange={setLateShopping} trackColor={{ true: t.accent }} />
           </Row>
           {busy ? <ActivityIndicator color={t.accent} /> : <Button label="Générer la semaine" icon="sparkles-outline" onPress={generate} />}
         </Card>
@@ -115,8 +115,8 @@ export default function Cuisine() {
           <SectionTitle>Batchs (pour toi)</SectionTitle>
           <Card>
             {plan.batchSessions.map((s) => (
-              <Pressable key={s.date} accessibilityRole="button" style={({ pressed }) => [styles.batch, pressed && { opacity: 0.6 }]} onPress={() => router.push({ pathname: '/recette/[id]', params: { id: s.recipeId, date: s.covers[0]!, slot: 'dejeuner' } })}>
-                <Row style={{ flexWrap: 'nowrap', gap: 10 }}>
+              <Pressable key={s.date} onPress={() => router.push({ pathname: '/recette/[id]', params: { id: s.recipeId, date: s.covers[0]!, slot: 'dejeuner' } })}>
+                <Row style={{ flexWrap: 'nowrap' }}>
                   <Ionicons name="cube-outline" size={18} color={t.accent} />
                   <View style={{ flex: 1 }}>
                     <Body bold>{weekdayName(s.date)} : {recipeById(s.recipeId)?.name}</Body>
@@ -136,9 +136,9 @@ export default function Cuisine() {
             const freeDinner = plan.freeMeals.some((f) => f.date === d && f.slot === 'diner');
             const isToday = d === localISODate(new Date());
             return (
-              <Card key={d} framed={isToday}>
+              <Card key={d} style={isToday ? { borderColor: t.accent, borderWidth: 1.5 } : undefined}>
                 <Row style={{ justifyContent: 'space-between' }}>
-                  <Text style={[styles.day, { color: isToday ? t.accent : t.text }]}>{inscription(formatDayShort(d))}</Text>
+                  <Body bold>{formatDayShort(d)}</Body>
                   <Badge label={`${plan.dailyKcal[d] ?? 0} kcal`} tone={isToday ? 'accent' : 'muted'} />
                 </Row>
                 {lunch && <MealRow meal={lunch} onPress={() => router.push({ pathname: '/recette/[id]', params: { id: lunch.recipeId, date: d, slot: 'dejeuner' } })} />}
@@ -158,8 +158,5 @@ export default function Cuisine() {
 
 const styles = StyleSheet.create({
   weekNav: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  navButton: { width: TOUCH, height: TOUCH, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderRadius: 4 },
-  weekRange: { fontFamily: fonts.display, fontWeight: '700', fontSize: 18, lineHeight: 26, letterSpacing: 0.5 },
-  batch: { minHeight: TOUCH, justifyContent: 'center' },
-  day: { fontFamily: fonts.display, fontWeight: '600', fontSize: 15, lineHeight: 22, letterSpacing: 1 },
+  navButton: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
 });
