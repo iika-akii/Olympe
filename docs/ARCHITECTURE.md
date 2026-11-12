@@ -1,6 +1,6 @@
 # Olympe : architecture
 
-> Mise à jour : 9 novembre 2026 · Règles métier : `docs/CONTEXTE_UTILISATEUR.md`
+> Mise à jour : 12 novembre 2026 · Règles métier : `docs/CONTEXTE_UTILISATEUR.md` · Direction artistique : `docs/DIRECTION_ARTISTIQUE.md`
 > Légende : **[Certain]** preuve concrète · **[Probable]** déduction forte · **[Incertain]** hypothèse à valider
 
 ---
@@ -43,6 +43,9 @@
 | Levier calorique | **Féculents** | La collation seule ne pouvait retirer que 70 kcal |
 | Journée | 2 modèles stockés comme données ; **défaut : 3 repas** (petit-déj banane + whey 230 kcal, repas 750, collation 400) | Choix de l'utilisateur. Les plats diète sont réajustés de ~650 à ~750 kcal |
 | Logique | **Headless-first** : toute règle dans `packages/core`, fonctions pures testées | Imposé |
+| Interface | **Un seul thème, sombre** (« Palestre »), porté par des tokens et des primitives ; aucun écran ne code une couleur ou une police en dur | Les statues sortent de l'ombre : un thème clair demanderait d'autres images. Changer la palette = modifier un fichier |
+| Images | Statues antiques **embarquées dans l'app** (WebP détourés, ~0,5 Mo au total), tirées de la collection Open Access du Met (domaine public) | Pas de backend, usage hors ligne ; aucune question de droits |
+| Polices | Grenze Gotisch, Barlow, Barlow Condensed, chargées à l'exécution par `expo-font` | Seul mode compatible Expo Go |
 
 ## 3. Vue d'ensemble
 
@@ -58,6 +61,32 @@ packages/core  (TypeScript pur, sans React / Expo / base)                       
    shopping (liste, texte à partager) · seed (ingrédients, recettes, substitutions, modèles de journée)
    planner ✔ · dates, vue des portions, export Markdown ✔ · training [tranche 6] · tracking [tranche 4]
 ```
+
+## 3 bis. Architecture de l'app (`apps/mobile/src`)
+
+**[Certain]** Quatre couches, chacune ne connaît que celle du dessous. Même discipline que le *headless-first*, appliquée à l'interface : la règle vit dans `core`, l'apparence vit dans `theme` et `components`, l'écran assemble.
+
+```
+app/            Écrans (Expo Router). Lisent les données, appellent core, assemblent des composants.
+  _layout.tsx        polices → base de données → pile de navigation (thème sombre)
+  (tabs)/            5 onglets sans barre de titre : Olympe (aujourd'hui), Entraînement, Forger, Cuisine, Profil
+  recette/[id] · courses · plaisir      écrans empilés, avec barre de titre et retour
+components/
+  Hero.tsx           En-tête d'onglet : statue, arc brisé, halo, titre
+  ui.tsx             Primitives : Screen, Card, Title, SectionTitle, Body, Badge, Banner, Button, Chip, CheckBox…
+  MealRow.tsx        Ligne de repas (composant métier, sans calcul)
+theme/          tokens.ts (matières, rôles, dégradés, polices, rayons) · fonts.ts · useTheme()
+data/           store.tsx (SQLite + repositories, compteur `version` pour relire après écriture) · catalog.ts (seed indexé)
+assets/statues/ Statues détourées ; préparées par scripts/prepare-statues.py
+```
+
+| Règle | Conséquence |
+|---|---|
+| Un écran n'écrit ni code couleur ni nom de police | Toute la DA se change dans `theme/tokens.ts` |
+| Une statue par onglet, aucune sur les écrans de travail (recette, courses, plat plaisir) | Le décor ouvre l'écran, il ne s'intercale jamais dans une liste à lire |
+| Les statues sont décoratives | Masquées aux lecteurs d'écran ; le titre porte l'information |
+| La DA ne change pas le contenu | Un écran affiche les mêmes informations qu'avant son habillage |
+| Cible tactile ≥ 48 px, texte courant ≥ 16 px | Usage à une main, en cuisine et en rayon |
 
 ## 4. Moteur d'adaptation (`recipes/adapt.ts`)
 
@@ -96,6 +125,7 @@ Typé dans `packages/core/src/domain.ts`. Unités canoniques g / ml / pièce ; l
 | **1** | `packages/core` : domaine, seed (60 ingrédients, 23 recettes), portions, adaptation, exclusions, courses, texte à partager, règles d'ajustement ; 34 tests | **Fait** |
 | **2** | Planificateur hebdo `planner/week.ts` : dimanche → samedi, batch A dimanche + batch B mercredi (utilisateur seul), dîners frais à deux, samedi midi frais, dimanche midi libre, ≤ 30 min (≤ 20 le mercredi), plafond de recettes à tester, riz de la veille, congélation / décongélation, report des courses au lundi, liste de courses ; 58 tests au total | **Fait** |
 | **3** | App Expo SDK 58 (compatible Expo Go) + `packages/db` : Aujourd'hui (repas, rappels, « elle a aimé ? »), Cuisine (jours de la compagne, génération, semaine), fiche recette (portions toi / elle, batch, verdicts), courses à cocher + partage, plats plaisir (3 modes), Profil (modèle de journée, export Markdown) | **Fait** |
+| **3c** | Direction artistique « Palestre » : statues grecques, arcs néo-gothiques, tokens et primitives, icône et écran de lancement | **Fait** |
 | 3b | Import de recettes : format standard des sites, puis API Claude | Clé API à fournir |
 | 4 | Socle métriques : pesée 1 tap, import Google Takeout, bilan du dimanche, règles d'ajustement | |
 | 5 | Health Connect (pas, sommeil total) | |
