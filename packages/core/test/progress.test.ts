@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, compareDeficits, healthAverages, summarizeProgress, weightTrend, type DailyHealth, type WeighIn,
+  addDays, compareDeficits, daysBetween, healthAverages, projectGoal, summarizeProgress, weightTrend, type DailyHealth, type WeighIn,
 } from '../src';
 
 const START = '2026-11-01';
@@ -94,5 +94,46 @@ describe('activité et déficits', () => {
     expect(compareDeficits(550, 2900, 2130)).toEqual({ scaleKcal: 550, braceletKcal: 770, gapKcal: 220 });
     expect(compareDeficits(null, 2900, 2130)).toEqual({ scaleKcal: null, braceletKcal: 770, gapKcal: null });
     expect(compareDeficits(550, null, 2130)).toEqual({ scaleKcal: 550, braceletKcal: null, gapKcal: null });
+  });
+});
+
+describe('projection de la date d’objectif', () => {
+  const from = { fromDate: START, fromKg: 100, goalKg: 85 };
+
+  it('sans aucune donnée : le rythme visé, avec une fourchette de dates', () => {
+    const p = projectGoal({ ...from, scaleWeeklyLossKg: null, braceletDeficitKcal: null })!;
+    expect(p.basis).toBe('rythme_vise');
+    expect(p.weeklyLossKg).toBe(0.5);
+    expect(daysBetween(START, p.etaDate)).toBe(210); // 15 kg à 0,5 kg par semaine = 30 semaines
+    expect(daysBetween(START, p.etaLatestDate!)).toBe(263); // 15 kg à 0,4 kg par semaine = 37,5 semaines
+  });
+
+  it('avec la seule dépense du bracelet : estimation, à confirmer par la balance', () => {
+    const p = projectGoal({ ...from, scaleWeeklyLossKg: null, braceletDeficitKcal: 770 })!;
+    expect(p.basis).toBe('bracelet');
+    expect(p.weeklyLossKg).toBe(0.7);
+    expect(p.dailyDeficitKcal).toBe(770);
+    expect(daysBetween(START, p.etaDate)).toBe(150);
+    expect(p.etaLatestDate).toBeNull();
+  });
+
+  it('dès que la balance parle, elle fait foi, même contre le bracelet', () => {
+    const p = projectGoal({ ...from, scaleWeeklyLossKg: 0.5, braceletDeficitKcal: 1200 })!;
+    expect(p.basis).toBe('balance');
+    expect(p.dailyDeficitKcal).toBe(550);
+    expect(daysBetween(START, p.etaDate)).toBe(210);
+  });
+
+  it('la balance montre que le poids ne baisse pas : pas de date, quoi que dise le bracelet', () => {
+    expect(projectGoal({ ...from, scaleWeeklyLossKg: 0, braceletDeficitKcal: 600 })).toBeNull();
+    expect(projectGoal({ ...from, scaleWeeklyLossKg: -0.2, braceletDeficitKcal: null })).toBeNull();
+  });
+
+  it('un bracelet qui n’annonce aucun déficit ne donne pas de date : on retombe sur le rythme visé', () => {
+    expect(projectGoal({ ...from, scaleWeeklyLossKg: null, braceletDeficitKcal: -100 })!.basis).toBe('rythme_vise');
+  });
+
+  it('objectif déjà atteint : rien à projeter', () => {
+    expect(projectGoal({ fromDate: START, fromKg: 85, goalKg: 85, scaleWeeklyLossKg: 0.5, braceletDeficitKcal: null })).toBeNull();
   });
 });

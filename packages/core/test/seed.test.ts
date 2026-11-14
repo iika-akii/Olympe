@@ -6,6 +6,24 @@ import {
 import { index, recipe } from './fixtures';
 
 describe('seed', () => {
+  it('chaque plat a sa préparation : au moins deux étapes, sans ingrédient refusé', () => {
+    for (const r of RECIPES) {
+      expect(r.steps.length, r.id).toBeGreaterThanOrEqual(2);
+      for (const step of r.steps) {
+        expect(step.trim().length, `${r.id} : étape vide`).toBeGreaterThan(10);
+        for (const k of EXCLUDED_INGREDIENT_KEYWORDS) expect(step.toLowerCase().includes(k), `${r.id} cite ${k}`).toBe(false);
+      }
+    }
+  });
+
+  it('un plat au riz dit comment cuire le riz, ou qu’il vient de la veille', () => {
+    for (const r of RECIPES) {
+      const rice = r.lines.some((l) => l.ingredientId.startsWith('riz-'));
+      if (rice) expect(r.steps.some((x) => /riz/i.test(x)), r.id).toBe(true);
+      if (r.needsDayOldRice) expect(r.steps[0], r.id).toMatch(/veille/);
+    }
+  });
+
   it('chaque ligne de recette référence un ingrédient connu', () => {
     for (const r of RECIPES) for (const l of r.lines) expect(index.has(l.ingredientId), `${r.id} → ${l.ingredientId}`).toBe(true);
   });

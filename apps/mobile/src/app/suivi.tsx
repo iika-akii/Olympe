@@ -1,9 +1,10 @@
 import {
-  DAY_TEMPLATES, NUTRITION_TARGETS, START_WEIGHT_KG, addDays, compareDeficits, decideAdjustment, formatDayLong, formatNumber,
-  healthAverages, localISODate, summarizeProgress, weightTrend, type AdjustmentDecision,
+  DAY_TEMPLATES, NUTRITION_TARGETS, START_WEIGHT_KG, addDays, compareDeficits, decideAdjustment, formatNumber,
+  healthAverages, localISODate, projectGoal, summarizeProgress, weightTrend, type AdjustmentDecision,
 } from '@olympe/core';
 import { useMemo } from 'react';
 import { Text, View, useWindowDimensions } from 'react-native';
+import { GoalPath } from '../components/GoalPath';
 import { WeighInCard } from '../components/WeighInCard';
 import { WeightChart } from '../components/WeightChart';
 import { Banner, Body, Card, NumberField, Row, Screen, SectionTitle, Stat, Stepper, text } from '../components/ui';
@@ -32,14 +33,23 @@ export default function Suivi() {
     const plannedKcal = template.slots.reduce((s, x) => s + x.kcal, 0);
     const summary = summarizeProgress({ weighIns, goalKg, today, startKg: weighIns[0]?.kg ?? START_WEIGHT_KG });
     const averages = healthAverages(repos.health.listBetween(addDays(today, -6), today), today);
+    const deficits = compareDeficits(summary.dailyDeficitKcal, averages.expenditureKcal, plannedKcal);
     return {
       goalKg,
       plannedKcal,
       summary,
       averages,
+      deficits,
+      // La projection part de la moyenne du jour ; sans pesée, du poids de départ.
+      projection: projectGoal({
+        fromDate: summary.latest?.date ?? today,
+        fromKg: summary.trendKg ?? START_WEIGHT_KG,
+        goalKg,
+        scaleWeeklyLossKg: summary.weeklyLossKg,
+        braceletDeficitKcal: deficits.braceletKcal,
+      }),
       points: weightTrend(weighIns),
       decision: decideAdjustment({ weighIns, currentKcalTarget: plannedKcal, targets: NUTRITION_TARGETS }),
-      deficits: compareDeficits(summary.dailyDeficitKcal, averages.expenditureKcal, plannedKcal),
       todayHealth: repos.health.get(today),
     };
   }, [repos, today, version]);
@@ -65,6 +75,9 @@ export default function Suivi() {
       <Card>
         <WeightChart points={data.points} goalKg={data.goalKg} width={width - 32 - 30} />
       </Card>
+      <Card tone="accent">
+        <GoalPath projection={data.projection} summary={summary} goalKg={data.goalKg} />
+      </Card>
       <Row style={{ gap: 8 }}>
         <Stat label="Moyenne 7 jours" value={summary.trendKg === null ? '—' : formatNumber(summary.trendKg)} unit="kg" tone="accent" />
         <Stat label="Depuis le départ" value={summary.lostKg === null ? '—' : signed(-summary.lostKg)} unit="kg" />
@@ -72,7 +85,7 @@ export default function Suivi() {
       </Row>
 
       <SectionTitle>Faut-il changer quelque chose ?</SectionTitle>
-      <Card tone="accent">
+      <Card>
         <Text style={[text.heading, { color: t.text }]}>{VERDICT[decision.action]}</Text>
         <Body>{decision.reason}</Body>
         {decision.action === 'insufficient_data' && summary.weeklyLossKg !== null && (
@@ -85,8 +98,6 @@ export default function Suivi() {
             {signed(decision.deltaKcal)} kcal par jour, soit {signed(decision.riceRawGramsPerDayDelta)} g de riz cru.
           </Body>
         )}
-        {summary.etaDate && <Body muted>À ce rythme, objectif atteint vers le {formatDayLong(summary.etaDate).split(' ').slice(1).join(' ')} {summary.etaDate.slice(0, 4)}.</Body>}
-        {summary.goalReached && <Body bold>Objectif atteint.</Body>}
       </Card>
       <Body muted>Rythme visé : 0,4 à 0,5 kg par semaine. Sous 0,3 on baisse, au-dessus de 0,7 on remonte pour protéger le muscle.</Body>
 

@@ -11,12 +11,13 @@ import { fonts, useTheme } from '../theme';
  * Sources et traitement : docs/DIRECTION_ARTISTIQUE.md, scripts/prepare-engravings.py.
  */
 export const ENGRAVINGS = {
-  adam: { source: require('../../assets/gravures/adam.webp'), ratio: 1200 / 727 },
-  ange: { source: require('../../assets/gravures/ange.webp'), ratio: 1200 / 727 },
-  hercule: { source: require('../../assets/gravures/hercule.webp'), ratio: 1200 / 727 },
-  forge: { source: require('../../assets/gravures/forge.webp'), ratio: 1200 / 727 },
-  bacchus: { source: require('../../assets/gravures/bacchus.webp'), ratio: 1200 / 727 },
-  phaeton: { source: require('../../assets/gravures/phaeton.webp'), ratio: 1 },
+  // Proportions : largeur / hauteur de chaque fichier, telles que le script les affiche.
+  adam: { source: require('../../assets/gravures/adam.webp'), ratio: 1440 / 634 },
+  ange: { source: require('../../assets/gravures/ange.webp'), ratio: 1440 / 891 },
+  hercule: { source: require('../../assets/gravures/hercule.webp'), ratio: 1040 / 625 },
+  forge: { source: require('../../assets/gravures/forge.webp'), ratio: 1440 / 878 },
+  bacchus: { source: require('../../assets/gravures/bacchus.webp'), ratio: 1161 / 1037 },
+  phaeton: { source: require('../../assets/gravures/phaeton.webp'), ratio: 900 / 923 },
 } satisfies Record<string, { source: ImageSourcePropType; ratio: number }>;
 export type EngravingName = keyof typeof ENGRAVINGS;
 
