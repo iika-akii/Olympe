@@ -30,12 +30,12 @@ JOBS = [
     ("doom", "profil", "enfer-profil.jpg", (0.03, 0.22, 0.97, 0.82), 1440 / 880, 0.86),
     ("doom", "attente", "enfer-attente.jpg", (0.10, 0.18, 0.95, 0.83), 1.0, 0.86),
     # Raven : « Le Corbeau » d'Edgar Poe (1884).
-    ("raven", "aujourdhui", "corbeau-aujourdhui.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("raven", "entrainement", "corbeau-entrainement.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("raven", "forger", "corbeau-forger.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("raven", "cuisine", "corbeau-cuisine.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("raven", "profil", "corbeau-profil.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("raven", "attente", "corbeau-attente.jpg", (0.0, 0.1, 1.0, 0.8), 1.0, 0.86),
+    ("raven", "aujourdhui", "corbeau-aujourdhui.jpg", (0.03, 0.28, 0.97, 0.90), 1440 / 880, 0.86),
+    ("raven", "entrainement", "corbeau-entrainement.jpg", (0.03, 0.20, 0.97, 0.90), 1440 / 880, 0.86),
+    ("raven", "forger", "corbeau-forger.jpg", (0.03, 0.06, 0.97, 0.90), 1440 / 880, 0.86),
+    ("raven", "cuisine", "corbeau-cuisine.jpg", (0.03, 0.26, 0.97, 0.90), 1440 / 880, 0.86),
+    ("raven", "profil", "corbeau-profil.jpg", (0.03, 0.18, 0.97, 0.90), 1440 / 880, 0.86),
+    ("raven", "attente", "corbeau-attente.jpg", (0.03, 0.02, 0.97, 0.75), 1.0, 0.86),
 ]
 # Part basse fondue dans le fond, bords latéraux et haut adoucis.
 FADE_BOTTOM, FADE_SIDES, FADE_TOP = 0.30, 0.05, 0.08
@@ -59,8 +59,8 @@ def crop(im: Image.Image, box, ratio: float) -> Image.Image:
 def light(im: Image.Image, ceiling: float) -> np.ndarray:
     """Clarté de la gravure (0..1), niveaux étirés, plafonnée."""
     lum = np.asarray(im.convert("L"), dtype=np.float32) / 255
-    a, b = np.percentile(lum, 2), np.percentile(lum, 98)
-    lum = np.clip((lum - a) / max(1e-6, b - a), 0, 1) ** 0.95
+    a, b = np.percentile(lum, 4), np.percentile(lum, 99)
+    lum = np.clip((lum - a) / max(1e-6, b - a), 0, 1) ** 1.2
     return lum * ceiling
 
 
