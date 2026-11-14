@@ -23,12 +23,12 @@ Image.MAX_IMAGE_PIXELS = None
 # éclat maximal (0..1 : plafonne les ciels blancs pour qu'ils n'éblouissent pas sur fond sombre).
 JOBS = [
     # Doom : « L'Enfer » de Dante (1861).
-    ("doom", "aujourdhui", "enfer-aujourdhui.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("doom", "entrainement", "enfer-entrainement.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("doom", "forger", "enfer-forger.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("doom", "cuisine", "enfer-cuisine.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("doom", "profil", "enfer-profil.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
-    ("doom", "attente", "enfer-attente.jpg", (0.0, 0.1, 1.0, 0.8), 1.0, 0.86),
+    ("doom", "aujourdhui", "enfer-aujourdhui.jpg", (0.02, 0.02, 0.98, 0.75), 1440 / 880, 0.86),
+    ("doom", "entrainement", "enfer-entrainement.jpg", (0.02, 0.02, 0.98, 0.80), 1440 / 880, 0.86),
+    ("doom", "forger", "enfer-forger.jpg", (0.02, 0.02, 0.98, 0.80), 1440 / 880, 0.86),
+    ("doom", "cuisine", "enfer-cuisine.jpg", (0.02, 0.25, 0.98, 0.80), 1440 / 880, 0.86),
+    ("doom", "profil", "enfer-profil.jpg", (0.03, 0.22, 0.97, 0.82), 1440 / 880, 0.86),
+    ("doom", "attente", "enfer-attente.jpg", (0.10, 0.18, 0.95, 0.83), 1.0, 0.86),
     # Raven : « Le Corbeau » d'Edgar Poe (1884).
     ("raven", "aujourdhui", "corbeau-aujourdhui.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
     ("raven", "entrainement", "corbeau-entrainement.jpg", (0.0, 0.0, 1.0, 0.62), 1440 / 880, 0.86),
@@ -60,7 +60,7 @@ def light(im: Image.Image, ceiling: float) -> np.ndarray:
     """Clarté de la gravure (0..1), niveaux étirés, plafonnée."""
     lum = np.asarray(im.convert("L"), dtype=np.float32) / 255
     a, b = np.percentile(lum, 2), np.percentile(lum, 98)
-    lum = np.clip((lum - a) / max(1e-6, b - a), 0, 1) ** 1.15
+    lum = np.clip((lum - a) / max(1e-6, b - a), 0, 1) ** 0.95
     return lum * ceiling
 
 
