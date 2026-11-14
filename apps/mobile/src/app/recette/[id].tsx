@@ -83,7 +83,7 @@ export default function RecipeScreen() {
 
       {recipe.steps.length > 0 && (
         <>
-          <SectionTitle>Étapes</SectionTitle>
+          <SectionTitle>Préparation</SectionTitle>
           <Card>
             {recipe.steps.map((s, i) => (
               <Row key={i} style={{ alignItems: 'flex-start', flexWrap: 'nowrap' }}>

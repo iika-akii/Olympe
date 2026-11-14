@@ -24,17 +24,19 @@ Une par onglet, en tête d'écran. Aucune sur les écrans de travail (recette, c
 
 | Écran | Image | Œuvre | Source |
 |---|---|---|---|
-| Olympe (aujourd'hui), icône | Les deux mains | Michel-Ange, *La Création d'Adam*, v. 1511, chapelle Sixtine | Wikimedia Commons |
+| Olympe (aujourd'hui) | La fresque entière : Adam et Dieu | Michel-Ange, *La Création d'Adam*, v. 1511, chapelle Sixtine | Wikimedia Commons |
+| Icône | Les deux mains | Détail de la même fresque | Wikimedia Commons |
 | Entraînement | Le Grand Hercule | Hendrick Goltzius, *The Great Hercules*, 1589 | Met, objet 343586 |
 | Forger | La forge | Cornelis Bos, *The Forge of Vulcan*, 1546 | Met, objet 399871 |
-| Cuisine | Bacchus | Hendrick Goltzius, *Bacchus* | Met, objet 373160 |
+| Cuisine | Bacchus, médaillon presque entier | Hendrick Goltzius, *Bacchus* | Met, objet 373160 |
 | Profil | L'ange déchu | Alexandre Cabanel, *L'Ange déchu*, 1847 | Wikimedia Commons |
 | Écran d'attente | La chute de Phaéton | Hendrick Goltzius, *Phaeton*, des « Quatre Disgraciés », 1588 | Met, objet 343581 |
 
 - Toutes les œuvres sont dans le domaine public ; les images du Met sont sous licence CC0 (Open Access).
 - Deux traitements (`apps/mobile/scripts/prepare-engravings.py`) :
   - une vraie gravure est débarrassée de son papier, on ne garde que le trait ;
-  - une peinture est **regravée** : tailles croisées dont l'épaisseur suit l'ombre, contours cernés.
+  - une peinture est **regravée** : tailles croisées dont l'épaisseur suit l'ombre, contours cernés. Le pas des tailles se règle par image : serré pour une vue d'ensemble (la fresque), large pour un gros plan.
+- Une gravure n'est jamais agrandie au-delà de sa définition d'origine, et les tailles s'effilent au lieu de s'arrêter net : ce sont les deux causes du rendu « pixelisé » corrigé le 14/11/2026.
 - Chaque image est en « encre seule » (noir + transparence). L'app la teinte à la couleur d'encre du thème : changer la palette ne demande pas de refaire les images.
 - Ajouter une image : déposer l'original, ajouter une ligne à `JOBS` dans le script, puis à `ENGRAVINGS` dans `Hero.tsx`.
 
@@ -58,5 +60,5 @@ Une par onglet, en tête d'écran. Aucune sur les écrans de travail (recette, c
 ## Limites connues
 
 - Rendu vérifié sur l'export web (412 × 915) seulement ; à confirmer sur ton téléphone avec l'APK.
-- Sur *L'Ange déchu*, le regard est petit dans le cadrage : c'est la chevelure et le bras qui portent l'image.
+- Sur *L'Ange déchu*, le regard reste dans l'ombre : c'est la chevelure, l'aile et le bras qui portent l'image.
 - Pas de thème sombre, pas d'animation.

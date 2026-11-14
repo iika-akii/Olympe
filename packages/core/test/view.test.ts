@@ -64,6 +64,6 @@ describe('export Markdown (Obsidian)', () => {
     expect(md.startsWith('---\nid: poulet-teriyaki\n')).toBe(true);
     expect(md).toContain('compagne: oui');
     expect(md).toContain('- [[poulet-filet|Filet de poulet]] : 180 g');
-    expect(md).toContain('## Étapes\n1. Saisir le poulet');
+    expect(md).toContain('## Étapes\n1. Riz : le rincer');
   });
 });

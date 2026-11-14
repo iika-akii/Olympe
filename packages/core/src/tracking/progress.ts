@@ -131,3 +131,73 @@ export function compareDeficits(scaleDeficitKcal: number | null, braceletExpendi
   const gapKcal = scaleDeficitKcal === null || braceletKcal === null ? null : braceletKcal - scaleDeficitKcal;
   return { scaleKcal: scaleDeficitKcal, braceletKcal, gapKcal };
 }
+
+/** Rythme visé (§2) : 0,4 à 0,5 kg par semaine. */
+export const TARGET_PACE_KG_PER_WEEK = { min: 0.4, max: 0.5 } as const;
+
+/**
+ * D'où vient le rythme de la projection, du plus fiable au moins fiable :
+ * - `balance` : la perte mesurée par les pesées ;
+ * - `bracelet` : la dépense du bracelet moins les calories du plan (indicatif, tant que la balance ne peut pas trancher) ;
+ * - `rythme_vise` : aucune donnée, on suppose que le plan tient le rythme visé.
+ */
+export type ProjectionBasis = 'balance' | 'bracelet' | 'rythme_vise';
+
+export interface GoalProjection {
+  basis: ProjectionBasis;
+  fromDate: ISODate;
+  fromKg: number;
+  goalKg: number;
+  /** Rythme retenu, en kg par semaine. Pour `rythme_vise` : le haut de la fourchette. */
+  weeklyLossKg: number;
+  dailyDeficitKcal: number;
+  /** Date d'arrivée à ce rythme. */
+  etaDate: ISODate;
+  /** `rythme_vise` seulement : date d'arrivée au bas de la fourchette. */
+  etaLatestDate: ISODate | null;
+}
+
+export interface ProjectionInput {
+  fromDate: ISODate;
+  /** Poids de départ de la projection : la tendance du jour, à défaut la dernière pesée ou le poids de départ. */
+  fromKg: number;
+  goalKg: number;
+  /** Perte mesurée par la balance, en kg par semaine. `null` tant qu'il n'y a pas assez de pesées. */
+  scaleWeeklyLossKg: number | null;
+  /** Déficit théorique du bracelet (dépense moins plan), en kcal par jour. */
+  braceletDeficitKcal: number | null;
+}
+
+const etaAt = (from: ISODate, remainingKg: number, weeklyLossKg: number) => addDays(from, Math.ceil((remainingKg / weeklyLossKg) * 7));
+
+/**
+ * Date à laquelle l'objectif serait atteint, selon le déficit estimé.
+ * La balance fait foi dès qu'elle peut parler : si elle montre que le poids ne baisse pas, il n'y a pas de date,
+ * même si le bracelet annonce un déficit. Renvoie `null` aussi quand l'objectif est déjà atteint.
+ */
+export function projectGoal(input: ProjectionInput): GoalProjection | null {
+  const remainingKg = input.fromKg - input.goalKg;
+  if (remainingKg <= 0) return null;
+  const base = { fromDate: input.fromDate, fromKg: input.fromKg, goalKg: input.goalKg };
+
+  if (input.scaleWeeklyLossKg !== null) {
+    if (input.scaleWeeklyLossKg <= 0) return null;
+    return {
+      ...base, basis: 'balance', weeklyLossKg: input.scaleWeeklyLossKg,
+      dailyDeficitKcal: Math.round((input.scaleWeeklyLossKg * KCAL_PER_KG_FAT) / 7),
+      etaDate: etaAt(input.fromDate, remainingKg, input.scaleWeeklyLossKg), etaLatestDate: null,
+    };
+  }
+  if (input.braceletDeficitKcal !== null && input.braceletDeficitKcal > 0) {
+    const weeklyLossKg = round((input.braceletDeficitKcal * 7) / KCAL_PER_KG_FAT, 2);
+    return {
+      ...base, basis: 'bracelet', weeklyLossKg, dailyDeficitKcal: Math.round(input.braceletDeficitKcal),
+      etaDate: etaAt(input.fromDate, remainingKg, weeklyLossKg), etaLatestDate: null,
+    };
+  }
+  const { min, max } = TARGET_PACE_KG_PER_WEEK;
+  return {
+    ...base, basis: 'rythme_vise', weeklyLossKg: max, dailyDeficitKcal: Math.round((max * KCAL_PER_KG_FAT) / 7),
+    etaDate: etaAt(input.fromDate, remainingKg, max), etaLatestDate: etaAt(input.fromDate, remainingKg, min),
+  };
+}

@@ -76,7 +76,7 @@ app/            Écrans (Expo Router). Lisent les données, appellent core, asse
 components/
   Hero.tsx           En-tête d'onglet : gravure teintée à l'encre, titre
   ui.tsx             Primitives : Screen, Card, Title, SectionTitle, Body, Stat, Stepper, NumberField, Badge, Banner, Button, Chip, CheckBox…
-  MealRow · WeighInCard · WeightChart      composants métier, sans calcul : ils affichent un résultat de core
+  MealRow · WeighInCard · WeightChart · GoalPath      composants métier, sans calcul : ils affichent un résultat de core
 theme/          tokens.ts (trois couleurs, rôles, polices, rayons) · fonts.ts · useTheme()
 data/           store.tsx (SQLite + repositories, compteur `version` pour relire après écriture) · catalog.ts (seed indexé)
 assets/gravures/ Images « encre seule » ; préparées par scripts/prepare-engravings.py
@@ -86,7 +86,7 @@ assets/gravures/ Images « encre seule » ; préparées par scripts/prepare-engr
 |---|---|
 | Un écran n'écrit ni code couleur ni nom de police | Toute la DA se change dans `theme/tokens.ts` |
 | Une gravure par onglet, aucune sur les écrans de travail | Le décor ouvre l'écran, il ne s'intercale jamais dans une liste à lire |
-| Un calcul affiché vient de `packages/core` | Le suivi lit `summarizeProgress`, `decideAdjustment`, `compareDeficits` (testés) |
+| Un calcul affiché vient de `packages/core` | Le suivi lit `summarizeProgress`, `projectGoal`, `decideAdjustment`, `compareDeficits` (testés) |
 | Cible tactile ≥ 48 px, texte courant ≥ 16 px | Usage à une main, en cuisine et en rayon |
 
 ## 4. Moteur d'adaptation (`recipes/adapt.ts`)
@@ -129,7 +129,8 @@ Typé dans `packages/core/src/domain.ts`. Unités canoniques g / ml / pièce ; l
 | **3c** | Direction artistique « Gravure » : gravures mythologiques à l'encre, trois couleurs, tokens et primitives, icône et écran de lancement | **Fait** |
 | **3d** | Cuisine : repas de la compagne saisis repas par repas (migration de la base) | **Fait** |
 | 3b | Import de recettes : format standard des sites, puis API Claude | Clé API à fournir |
-| **4** (en partie) | Suivi : pesée du matin, courbe et moyenne sur 7 jours, objectif, verdict d'ajustement, pas et dépense du bracelet saisis à la main, déficit balance contre bracelet ; 97 tests au total | **Fait** |
+| **4** (en partie) | Suivi : pesée du matin, courbe et moyenne sur 7 jours, objectif, verdict d'ajustement, pas et dépense du bracelet saisis à la main, déficit balance contre bracelet, projection de la date d'objectif (balance, à défaut bracelet, à défaut rythme visé) ; 106 tests au total | **Fait** |
+| **3e** | Préparation pas à pas de chaque plat du seed (24 recettes) | **Fait** |
 | 4 (reste) | Import Google Takeout, bilan du dimanche, application automatique de l'ajustement au plan | |
 | 5 | Health Connect (pas, sommeil total) | |
 | 6 | Entraînement : séance du jour, saisie, minuteur, double progression (Hevy en attendant) | Programme à fournir |

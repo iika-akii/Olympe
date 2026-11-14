@@ -40,6 +40,12 @@ export function formatDayLong(d: ISODate): string {
   return `${DAYS[p.wd]} ${p.day === 1 ? '1er' : p.day} ${MONTHS[p.m - 1]}`;
 }
 
+/** « 28 mai 2027 » */
+export function formatDate(d: ISODate): string {
+  const p = parts(d);
+  return `${p.day === 1 ? '1er' : p.day} ${MONTHS[p.m - 1]} ${p.y}`;
+}
+
 /** « dim. 15 nov. » */
 export function formatDayShort(d: ISODate): string {
   const p = parts(d);
