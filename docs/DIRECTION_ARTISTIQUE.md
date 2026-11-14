@@ -16,7 +16,7 @@ Un livre de mythologie gravé : des corps de héros et de dieux tracés à l'enc
 
 - Pas de quatrième teinte : ce qui concerne la compagne se dit par un aplat d'encre, une alerte par le rouge et une icône.
 - Contrastes sur le papier : encre 16:1, encre voilée 6,6:1, rouge 6,0:1. L'encre pâle ne sert jamais à un texte à lire.
-- Palettes de rechange `doom` et `raven` (sombres), non actives : `apps/mobile/src/theme/palettes/`, analyse dans `docs/PROPOSITIONS_COULEURS.md`. On change de palette avec `ACTIVE_PALETTE` dans `tokens.ts`.
+- Trois autres palettes pour Gravure (vert-de-gris, outremer, nuit) et deux autres directions artistiques (Doom, Raven), au choix dans Profil → Apparence. Analyse : `docs/PROPOSITIONS_COULEURS.md` et `docs/DA_DOOM_RAVEN.md`.
 
 ## Gravures
 
@@ -61,4 +61,4 @@ Une par onglet, en tête d'écran. Aucune sur les écrans de travail (recette, c
 
 - Rendu vérifié sur l'export web (412 × 915) seulement ; à confirmer sur ton téléphone avec l'APK.
 - Sur *L'Ange déchu*, le regard reste dans l'ombre : c'est la chevelure, l'aile et le bras qui portent l'image.
-- Pas de thème sombre, pas d'animation.
+- Pas d'animation. La palette « nuit » est sombre : les gravures « encre seule » y passent en négatif.

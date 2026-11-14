@@ -8,7 +8,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Badge, Banner, Body, Card, Chip, Divider, Row, Screen, SectionTitle, Title, text } from '../../components/ui';
 import { INDEX, SLOT_LABEL, VERDICT_LABEL, recipeById } from '../../data/catalog';
 import { useData } from '../../data/store';
-import { fonts, useTheme } from '../../theme';
+import { useTheme } from '../../theme';
 
 export default function RecipeScreen() {
   const { id, date, slot } = useLocalSearchParams<{ id: string; date?: string; slot?: MealSlot }>();
@@ -87,7 +87,7 @@ export default function RecipeScreen() {
           <Card>
             {recipe.steps.map((s, i) => (
               <Row key={i} style={{ alignItems: 'flex-start', flexWrap: 'nowrap' }}>
-                <Text style={[styles.step, { color: t.accent }]}>{i + 1}</Text>
+                <Text style={[text.step, styles.step, { color: t.accent }]}>{i + 1}</Text>
                 <Body style={{ flex: 1 }}>{s}</Body>
               </Row>
             ))}
@@ -126,19 +126,19 @@ function QuantityTable({ lines, withPartner }: { lines: PortionViewLine[]; withP
     <View>
       {withPartner && (
         <View style={styles.qRow}>
-          <Text style={styles.qName} />
+          <Text style={[text.body, styles.qName]} />
           <Text style={[text.label, styles.qHead, { color: t.accent }]}>Toi</Text>
           <Text style={[text.label, styles.qHead, { color: t.partner }]}>Elle</Text>
         </View>
       )}
       {lines.map((l) => (
         <View key={l.ingredientId} style={[styles.qRow, { borderBottomColor: t.border }]}>
-          <Text style={[styles.qName, { color: t.text }]}>
+          <Text style={[text.body, styles.qName, { color: t.text }]}>
             {l.name}
             {l.note ? <Text style={{ color: t.muted }}> · {l.note}</Text> : null}
           </Text>
-          <Text style={[styles.qVal, { color: t.text }]}>{l.user.text}</Text>
-          {withPartner && <Text style={[styles.qVal, { color: t.partner }]}>{l.partner?.text}</Text>}
+          <Text style={[text.number, styles.qVal, { color: t.text }]}>{l.user.text}</Text>
+          {withPartner && <Text style={[text.number, styles.qVal, { color: t.partner }]}>{l.partner?.text}</Text>}
         </View>
       ))}
     </View>
@@ -146,9 +146,9 @@ function QuantityTable({ lines, withPartner }: { lines: PortionViewLine[]; withP
 }
 
 const styles = StyleSheet.create({
-  step: { width: 22, fontFamily: fonts.display, fontWeight: '600', fontSize: 20, lineHeight: 24 },
+  step: { width: 22 },
   qRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 7, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'transparent', gap: 8 },
-  qName: { flex: 1, fontFamily: fonts.text, fontWeight: '400', fontSize: 16, lineHeight: 22 },
-  qVal: { width: 92, textAlign: 'right', fontFamily: fonts.text, fontWeight: '500', fontSize: 16, lineHeight: 22, fontVariant: ['tabular-nums'] },
+  qName: { flex: 1 },
+  qVal: { width: 92, textAlign: 'right' },
   qHead: { width: 92, textAlign: 'right' },
 });

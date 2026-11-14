@@ -1,9 +1,9 @@
-import { theme, type Theme } from './tokens';
-
-export * from './tokens';
+export { DEFAULT_LOOK, LOOKS, isLookId, resolveLook, type Look, type LookId } from './looks';
+export { LookProvider, fonts, radius, text, useDirection, useLookChoice, useTheme } from './current';
 export { useAppFonts } from './fonts';
+export { directions } from './directions';
+export { palettes, type PaletteName } from './palettes';
+export type { Direction, DirectionName, EngravingName, HeroImage, Shape, Theme, TypeScale } from './types';
 
-/** Le thème de la palette active (`ACTIVE_PALETTE` dans tokens.ts). */
-export function useTheme(): Theme {
-  return theme;
-}
+/** Cible tactile minimale (une main, en rayon). */
+export const TOUCH = 48;

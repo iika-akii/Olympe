@@ -13,6 +13,9 @@ export function settingsRepo(db: SqlDriver) {
     setDayTemplateId: (id: string) => set('day_template_id', id),
     getGoalKg: (): number => Number(get('goal_kg') ?? DEFAULT_GOAL_KG),
     setGoalKg: (kg: number) => set('goal_kg', String(kg)),
+    /** Apparence choisie (direction artistique et palette). `null` : l'app prend son défaut. */
+    getLook: (): string | null => get('look'),
+    setLook: (look: string) => set('look', look),
   };
 }
 

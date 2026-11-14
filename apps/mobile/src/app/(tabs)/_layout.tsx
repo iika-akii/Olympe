@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import { StyleSheet, View, type ColorValue } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { IconName } from '../../components/ui';
-import { fonts, useTheme } from '../../theme';
+import { useDirection, useTheme } from '../../theme';
 
 /** Icône d'onglet : pleine et surmontée d'un trait de braise quand l'onglet est actif. */
 const icon = (outline: IconName, filled: IconName) => ({ color, focused }: { color: ColorValue; size: number; focused: boolean }) => (
@@ -15,6 +15,7 @@ const icon = (outline: IconName, filled: IconName) => ({ color, focused }: { col
 
 export default function TabLayout() {
   const t = useTheme();
+  const d = useDirection();
   const insets = useSafeAreaInsets();
   return (
     <Tabs
@@ -26,7 +27,7 @@ export default function TabLayout() {
         tabBarInactiveTintColor: t.muted,
         // Hauteur explicite (la barre ajoute elle-même la marge basse du système) : par défaut, l'étiquette est rognée.
         tabBarStyle: { backgroundColor: t.bg, borderTopColor: t.border, borderTopWidth: 1, height: 64 + insets.bottom },
-        tabBarLabelStyle: { fontFamily: fonts.text, fontWeight: '600', fontSize: 11, lineHeight: 15 },
+        tabBarLabelStyle: d.type.tabLabel,
         sceneStyle: { backgroundColor: t.bg },
       }}
     >

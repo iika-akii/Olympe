@@ -16,7 +16,7 @@ App perso diète, cuisine, courses, entraînement, suivi. Utilisateur unique, in
 - Commandes : `pnpm install`, `pnpm test`, `pnpm typecheck`, `pnpm mobile` (serveur Expo).
 - App : `apps/mobile`, Expo SDK 58, doit rester compatible Expo Go (pas de module natif hors Expo Go avant la tranche Health Connect). Lire `apps/mobile/AGENTS.md` avant de toucher une API Expo.
 - Dans un conteneur sans accès à api.expo.dev : `EXPO_OFFLINE=1 npx expo install <paquet>` et `EXPO_OFFLINE=1 npx expo export --platform android|web`.
-- Interface : thème clair unique, trois couleurs seulement (papier, encre, rouge sang). Un écran n'écrit jamais une couleur ni une police en dur : il passe par `src/theme` et les primitives de `src/components/ui.tsx`.
+- Interface : apparence par défaut « Gravure » (papier, encre, rouge sang) ; d'autres apparences (palettes de Gravure, DA Doom et Raven) se choisissent dans Profil. Chaque palette a trois couleurs seulement. Un écran n'écrit jamais une couleur ni une police en dur : il passe par `src/theme` (`useTheme`, `useDirection`, `text`) et les primitives de `src/components/ui.tsx`.
 - Suivi : on juge sur la balance (moyenne sur 7 jours, verdict après 3 semaines). La dépense du bracelet s'affiche et se compare, elle ne modifie jamais le budget.
 - Unités canoniques : g, ml, piece.
 - Ne jamais ajouter au budget calorique les calories « brûlées » du Fitbit.

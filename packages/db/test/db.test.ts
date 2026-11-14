@@ -82,6 +82,13 @@ describe('suivi', () => {
     repos.settings.setGoalKg(88.5);
     expect(repos.settings.getGoalKg()).toBe(88.5);
   });
+
+  it('apparence : aucune par défaut, mémorisée une fois choisie', () => {
+    const { repos } = setup();
+    expect(repos.settings.getLook()).toBeNull();
+    repos.settings.setLook('raven');
+    expect(repos.settings.getLook()).toBe('raven');
+  });
 });
 
 describe('notes des recettes', () => {

@@ -1,31 +1,53 @@
-# Olympe : propositions de couleurs « doom » et « raven »
+# Olympe : propositions de couleurs
 
 > 14 novembre 2026 · Branche `claude/da-couleurs` · Palettes : `apps/mobile/src/theme/palettes/` · Planches : `docs/couleurs/`
+>
+> Mise à jour du soir : les palettes « doom » et « raven » sont désormais portées par deux directions artistiques complètes (`docs/DA_DOOM_RAVEN.md`). Ce document ajoute trois autres palettes pour Gravure : vert-de-gris (claire), outremer (tranchée), nuit (sombre).
 
-**[Certain]** Je recommande de garder « Gravure ». Les deux palettes demandées sont sombres par nature. Sur un fond sombre, les gravures, dessinées pour l'encre sur papier, s'affichent en négatif. Si le précédent thème vous a paru « trop foncé » parce qu'il était sombre (et pas seulement parce qu'il était terne), ces deux-là vous gêneront aussi. Elles sont pourtant plus contrastées que lui, mesures à l'appui.
+**[Certain]** Je recommande de garder « Gravure » en rouge sang. Les palettes sombres affichent les gravures, dessinées pour l'encre sur papier, en négatif. Si le précédent thème vous a paru « trop foncé » parce qu'il était sombre (et pas seulement parce qu'il était terne), elles vous gêneront aussi, même si leurs contrastes sont meilleurs que les siens, mesures à l'appui.
 
 Ces palettes reprennent des teintes et une ambiance, rien d'autre : aucun logo, personnage ni élément graphique des jeux.
 
-## Activer une palette
+## Changer d'apparence
 
-Dans `apps/mobile/src/theme/tokens.ts`, changer une seule ligne :
+Dans l'app : **Profil → Apparence**. Les trois premières puces choisissent la direction artistique (Gravure, Doom, Raven). Sous Gravure, quatre puces choisissent la palette (rouge sang, vert-de-gris, outremer, nuit). Le choix est mémorisé dans la base du téléphone.
 
-```ts
-export const ACTIVE_PALETTE: PaletteName = 'gravure'; // ou 'doom', ou 'raven'
-```
-
-Tout le reste suit : écrans, onglets, barre de titre, gravures (teintées par `theme.text`), barre d'état (claire ou sombre selon le nouveau rôle `scheme`).
-
-**[Certain]** Restent sur le papier clair, parce qu'ils sont réglés dans `app.json` et pas par le thème : l'écran de démarrage natif (`splash`), le fond de l'icône adaptative et `userInterfaceStyle: "light"`, qui garde le clavier et les boîtes de dialogue système en clair. Pour un essai, ce n'est pas gênant. Si une palette sombre est adoptée, il faudra modifier ces trois valeurs, sinon un éclair clair apparaîtra au lancement.
+**[Certain]** Ce qui ne suit pas, parce que c'est réglé dans `app.json` et non par le thème : l'écran de démarrage natif (`splash`), le fond de l'icône adaptative et `userInterfaceStyle: "light"`, qui garde le clavier et les boîtes de dialogue système en clair. Pour un essai, ce n'est pas gênant. Si une apparence sombre est adoptée, il faudra modifier ces trois valeurs, sinon un éclair clair apparaîtra au lancement.
 
 ## Ce qui a changé dans le code
 
-- `theme/types.ts` : l'interface `Theme`, avec un rôle de plus, `scheme: 'light' | 'dark'`, renseigné dans les trois palettes. `_layout.tsx` s'en sert pour la barre d'état et le thème de navigation, et rien d'autre.
-- `theme/palettes/gravure.ts`, `doom.ts`, `raven.ts` : chaque fichier contient sa palette (matières) et son `Theme` (rôles). « Gravure » reprend les valeurs d'avant à l'identique.
-- `theme/tokens.ts` : `ACTIVE_PALETTE` choisit la palette ; la valeur par défaut reste `gravure`.
-- Aucun écran, aucune police, aucune image ni mise en page modifiés.
+- `theme/types.ts` : l'interface `Theme`, avec un rôle de plus, `scheme: 'light' | 'dark'`, qui règle la barre d'état et le thème de navigation, rien d'autre.
+- `theme/palettes/` : un fichier par palette, avec ses matières et son `Theme` (ses rôles). `gravure.ts` reprend les valeurs d'origine à l'identique.
+- `theme/looks.ts` : la liste des apparences, chacune associant une direction et une palette. Par défaut : `gravure`.
+- Onglets inactifs : leur libellé passe de `faint` à `muted` (6,6:1 au lieu de 2,8:1 sur le papier). La même correction existait déjà sur `claude/da-olympe`, que j'ai fusionnée.
 
-## Les trois palettes
+## Trois variantes de Gravure
+
+Même direction artistique (gravures, lettre gothique, quadrilobe). Seules les couleurs changent, toujours trois.
+
+| Variante | Couleurs | Rôle de chacune |
+|---|---|---|
+| **Vert-de-gris** (claire) | papier `#F4EFE6` · encre `#17130F` · vert-de-gris `#2E6B5E` (sombre `#1F4D43`, pâle `#DCE8E3`) | Gravure telle quelle, le rouge remplacé par la patine du cuivre |
+| **Outremer** (tranchée) | blanc `#FFFFFF` (pressé `#EDEDED`) · noir `#000000` (voilé `#4A4A4A`, pâle `#7A7A7A`) · outremer `#1A3FD9` (sombre `#102A9E`, pâle `#E3E8FF`) | Aucun gris de papier, des bordures noires : chaque carte est un cadre net |
+| **Nuit** (sombre) | encre `#17130F` (cartes `#211C17`, filet `#3D352C`) · papier `#F4EFE6` (voilé `#BDB3A3`) · rouge `#F0566A` (clair `#F59AA5`, ombre `#3E1A1D`) | Gravure retournée : l'encre fait le fond, le papier fait le texte |
+
+| Paire (rôles) | Rouge sang | Vert-de-gris | Outremer | Nuit |
+|---|---|---|---|---|
+| `text` / `bg` | 16,1 | 16,1 | 21,0 | 16,1 |
+| `muted` / `card` | 7,1 | 7,1 | 8,9 | 8,2 |
+| `accent` / `bg` | 6,0 | 5,4 | 7,6 | 5,5 |
+| `accent` / `card` | 6,5 | 5,9 | 7,6 | 5,0 |
+| `accentDeep` / `accentSoft` | 7,4 | 7,6 | 9,3 | 7,3 |
+| `onInk` / `ink` | 17,4 | 17,4 | 21,0 | 16,1 |
+| `faint` / `bg` (décor seulement) | 2,8 | 2,8 | 4,3 | 5,1 |
+
+**[Certain]** Toutes dépassent 4,5:1 pour le texte courant.
+
+- **Vert-de-gris.** La plus douce, et la plus « cuisine ». Mais le vert, moins chaud que le rouge, signale moins bien une alerte : les bandeaux se repèrent surtout à leur icône. **[Probable]** C'est la seule qui pourrait remplacer le rouge sang sans rien perdre en lisibilité.
+- **Outremer.** La plus lisible en plein soleil (21:1) et la plus « affiche ». Les bordures noires alourdissent les longues listes (planning, courses) ; c'est voulu, puisque vous demandiez du « très tranché », mais l'œil fatigue plus vite. Le papier disparaît, et avec lui une partie du charme du livre ancien.
+- **Nuit.** Reposante le soir, mais les gravures « encre seule » y passent en négatif, comme dans les premières propositions sombres. Je l'ai gardée parce que vous vouliez une variante sombre ; je ne la recommande pas sans gravures retravaillées.
+
+## Les palettes de départ : Gravure, Doom, Raven
 
 ### Gravure (actuelle) : papier, encre, rouge sang
 

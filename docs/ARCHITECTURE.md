@@ -43,8 +43,8 @@
 | Levier calorique | **Féculents** | La collation seule ne pouvait retirer que 70 kcal |
 | Journée | 2 modèles stockés comme données ; **défaut : 3 repas** (petit-déj banane + whey 230 kcal, repas 750, collation 400) | Choix de l'utilisateur. Les plats diète sont réajustés de ~650 à ~750 kcal |
 | Logique | **Headless-first** : toute règle dans `packages/core`, fonctions pures testées | Imposé |
-| Interface | **Un seul thème, clair, à trois couleurs** (« Gravure » : papier, encre, rouge sang), porté par des tokens et des primitives ; aucun écran ne code une couleur ou une police en dur | Demande de l'utilisateur (12/11/2026) : couleurs claires ou tranchées, trois au plus. Changer la palette = modifier un fichier |
-| Images | Gravures **embarquées dans l'app** en « encre seule » (noir + transparence), teintées par le thème | Hors ligne, domaine public ; une nouvelle palette ne demande pas de refaire les images |
+| Interface | **Apparence = direction artistique + palette à trois couleurs.** Défaut : « Gravure » (papier, encre, rouge sang). Trois autres palettes pour Gravure, deux DA sombres (Doom, Raven), au choix dans Profil, mémorisé en base. Aucun écran ne code une couleur ou une police en dur | Demande de l'utilisateur (12 et 14/11/2026) : couleurs claires ou tranchées, trois au plus ; essayer d'autres DA sur le téléphone avant de choisir |
+| Images | Gravures **embarquées dans l'app**, teintées par le thème : « encre seule » pour Gravure, « trait clair » (Doré) pour Doom et Raven | Hors ligne, domaine public ; une nouvelle palette ne demande pas de refaire les images |
 | Polices | Grenze Gotisch, Barlow, Barlow Condensed, chargées à l'exécution par `expo-font` | Seul mode compatible Expo Go |
 | Compagne | Présence saisie **repas par repas** (`PartnerMeal`), plus par jour | Un jour compte plusieurs repas ; seuls les repas cuisinés frais se partagent (7 dîners, samedi midi) |
 | Suivi | Pesée, pas et dépense du bracelet **saisis à la main** ; verdict par `decideAdjustment` | Health Connect reste la tranche 5. La dépense du bracelet est comparée à la balance, jamais ajoutée au budget (§2 du contexte) |
@@ -70,21 +70,22 @@ packages/core  (TypeScript pur, sans React / Expo / base)                       
 
 ```
 app/            Écrans (Expo Router). Lisent les données, appellent core, assemblent des composants.
-  _layout.tsx        polices → base de données → pile de navigation (thème clair)
+  _layout.tsx        polices → base de données → apparence enregistrée → pile de navigation
   (tabs)/            5 onglets sans barre de titre : Olympe (aujourd'hui), Entraînement, Forger, Cuisine, Profil
   recette/[id] · courses · plaisir · suivi      écrans empilés, avec barre de titre et retour
 components/
   Hero.tsx           En-tête d'onglet : gravure teintée à l'encre, titre
   ui.tsx             Primitives : Screen, Card, Title, SectionTitle, Body, Stat, Stepper, NumberField, Badge, Banner, Button, Chip, CheckBox…
   MealRow · WeighInCard · WeightChart · GoalPath      composants métier, sans calcul : ils affichent un résultat de core
-theme/          tokens.ts (trois couleurs, rôles, polices, rayons) · fonts.ts · useTheme()
+theme/          palettes/ (couleurs) · directions/ (polices, échelle typographique, formes, images) · looks.ts (apparences)
+                current.tsx (LookProvider, useTheme, useDirection, text) · fonts.ts
 data/           store.tsx (SQLite + repositories, compteur `version` pour relire après écriture) · catalog.ts (seed indexé)
 assets/gravures/ Images « encre seule » ; préparées par scripts/prepare-engravings.py
 ```
 
 | Règle | Conséquence |
 |---|---|
-| Un écran n'écrit ni code couleur ni nom de police | Toute la DA se change dans `theme/tokens.ts` |
+| Un écran n'écrit ni code couleur ni nom de police | Toute la DA se change dans `theme/` ; changer d'apparence remonte l'arbre, chaque style relit la direction courante |
 | Une gravure par onglet, aucune sur les écrans de travail | Le décor ouvre l'écran, il ne s'intercale jamais dans une liste à lire |
 | Un calcul affiché vient de `packages/core` | Le suivi lit `summarizeProgress`, `projectGoal`, `decideAdjustment`, `compareDeficits` (testés) |
 | Cible tactile ≥ 48 px, texte courant ≥ 16 px | Usage à une main, en cuisine et en rayon |

@@ -16,9 +16,24 @@ importers:
       '@expo-google-fonts/barlow-condensed':
         specifier: ^0.4.1
         version: 0.4.1
+      '@expo-google-fonts/chakra-petch':
+        specifier: ^0.4.1
+        version: 0.4.1
+      '@expo-google-fonts/cinzel':
+        specifier: ^0.4.2
+        version: 0.4.2
       '@expo-google-fonts/grenze-gotisch':
         specifier: ^0.4.2
         version: 0.4.2
+      '@expo-google-fonts/im-fell-english':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@expo-google-fonts/spectral':
+        specifier: ^0.4.1
+        version: 0.4.1
+      '@expo-google-fonts/teko':
+        specifier: ^0.4.1
+        version: 0.4.1
       '@expo/vector-icons':
         specifier: ^15.1.1
         version: 15.1.1(expo-font@58.0.12(expo@58.0.24)(react-native@0.88.1(@babel/core@7.29.13)(@react-native/metro-config@0.88.1(@babel/core@7.29.13))(@types/react@19.3.0)(react@19.3.0))(react@19.3.0))(react-native@0.88.1(@babel/core@7.29.13)(@react-native/metro-config@0.88.1(@babel/core@7.29.13))(@types/react@19.3.0)(react@19.3.0))(react@19.3.0)
@@ -649,8 +664,23 @@ packages:
   '@expo-google-fonts/barlow@0.4.1':
     resolution: {integrity: sha512-ARAwBvQFGxOt2dfoQRVDRZghaStrXTIyI7oBD6/J4z2Iyr+0ME2HJq13RFhTuagCFrT4iapzuKHwOR3iLrNJrA==}
 
+  '@expo-google-fonts/chakra-petch@0.4.1':
+    resolution: {integrity: sha512-a0Lf+kHUO1UrCWTylvfssuoIpyoU+4ey8HoHmu0XSutFbq2FqkAGYChaiaHksQqayqv+X2R7cUKcBY+4zFqr1w==}
+
+  '@expo-google-fonts/cinzel@0.4.2':
+    resolution: {integrity: sha512-UAlyuHCGjmKpMt2MoCKYueHz8ZEzjHO1VEol2G7NcPW54UH+85SWIGzpor05YNqUvr/aoqS8Qrfnswxg1RsNMw==}
+
   '@expo-google-fonts/grenze-gotisch@0.4.2':
     resolution: {integrity: sha512-X9XzVqJWhvsazok9Lo5h1O8szq43P+G1xqCpu9+3VFVox0JXTPI9BDhREXg/MH/de5pFqSI6MSiblgIRWZQ5BA==}
+
+  '@expo-google-fonts/im-fell-english@0.4.0':
+    resolution: {integrity: sha512-3T3k+eFGndWH7RfnKm0R+/AAcUIf1W0WEaPOzVZhffQvqYvz5RDuIxWXjIRXSzQMWk/Ak/Re7pLGXAFHfAxiKw==}
+
+  '@expo-google-fonts/spectral@0.4.1':
+    resolution: {integrity: sha512-9bbehW/XUAoHWAsd5rgLYRY/I1+FZFZJOyvbsM1mD9vqNJEB3izviAyZ5k7lEQpYcHV1cxChGg9HpWW+0YkJog==}
+
+  '@expo-google-fonts/teko@0.4.1':
+    resolution: {integrity: sha512-QxRg1i6HCv3KyV/SvvuVGVOP3xP3SZS9cKfewMO/BXAUtML7MJpBrOQthkUoGguylRbql6Qz++csVfzFXnijSw==}
 
   '@expo/cli@58.1.20':
     resolution: {integrity: sha512-VXXcqGuXBngzItcP97ERWON3aHJOeAwDxuRlkxgbYfW9m9DpGHM6umGgjOPWWy14xSArUvwGZpg+D5Ms+hnnkg==}
@@ -3758,7 +3788,17 @@ snapshots:
 
   '@expo-google-fonts/barlow@0.4.1': {}
 
+  '@expo-google-fonts/chakra-petch@0.4.1': {}
+
+  '@expo-google-fonts/cinzel@0.4.2': {}
+
   '@expo-google-fonts/grenze-gotisch@0.4.2': {}
+
+  '@expo-google-fonts/im-fell-english@0.4.0': {}
+
+  '@expo-google-fonts/spectral@0.4.1': {}
+
+  '@expo-google-fonts/teko@0.4.1': {}
 
   '@expo/cli@58.1.20(@expo/dom-webview@58.0.2)(@expo/metro-runtime@58.0.17)(expo-constants@58.0.16)(expo-font@58.0.12(expo@58.0.24)(react-native@0.88.1(@babel/core@7.29.13)(@react-native/metro-config@0.88.1(@babel/core@7.29.13))(@types/react@19.3.0)(react@19.3.0))(react@19.3.0))(expo-router@58.0.31)(expo@58.0.24)(react-dom@19.3.0(react@19.3.0))(react-native@0.88.1(@babel/core@7.29.13)(@react-native/metro-config@0.88.1(@babel/core@7.29.13))(@types/react@19.3.0)(react@19.3.0))(react@19.3.0)(typescript@6.0.3)':
     dependencies:

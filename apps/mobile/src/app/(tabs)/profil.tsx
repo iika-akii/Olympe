@@ -4,14 +4,20 @@ import { router } from 'expo-router';
 import { Pressable, Share, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Hero } from '../../components/Hero';
-import { Body, Button, Card, Row, Screen, SectionTitle, text } from '../../components/ui';
+import { Body, Button, Card, Chip, Row, Screen, SectionTitle, text } from '../../components/ui';
 import { INDEX, RECIPES, SLOT_LABEL } from '../../data/catalog';
 import { useData } from '../../data/store';
-import { useTheme } from '../../theme';
+import { LOOKS, useDirection, useLookChoice, useTheme } from '../../theme';
 
 export default function Profil() {
   const { repos, version, refresh } = useData();
   const t = useTheme();
+  const d = useDirection();
+  const look = useLookChoice();
+  const gravureLooks = LOOKS.filter((l) => l.direction === 'gravure');
+  const pickDirection = (name: 'gravure' | 'doom' | 'raven') => {
+    if (name !== d.name) look.setLook(name === 'gravure' ? 'gravure' : name);
+  };
   const templateId = useMemo(() => repos.settings.getDayTemplateId(), [repos, version]);
 
   const exportMarkdown = () => {
@@ -65,8 +71,20 @@ export default function Profil() {
       <SectionTitle>Mes recettes</SectionTitle>
       <Button label="Exporter en Markdown (Obsidian)" icon="download-outline" variant="secondary" onPress={exportMarkdown} />
 
+      <SectionTitle>Apparence</SectionTitle>
+      <Row style={{ flexWrap: 'nowrap' }}>
+        <Chip grow label="Gravure" selected={d.name === 'gravure'} onPress={() => pickDirection('gravure')} />
+        <Chip grow label="Doom" selected={d.name === 'doom'} onPress={() => pickDirection('doom')} />
+        <Chip grow label="Raven" selected={d.name === 'raven'} onPress={() => pickDirection('raven')} />
+      </Row>
+      {d.name === 'gravure' && (
+        <Row>
+          {gravureLooks.map((l) => <Chip key={l.id} label={l.label} selected={look.id === l.id} onPress={() => look.setLook(l.id)} />)}
+        </Row>
+      )}
+
       <Body muted>Données stockées uniquement sur ce téléphone.</Body>
-      <Text style={[text.small, { color: t.faint }]}>Gravures : Metropolitan Museum of Art (Open Access) et Wikimedia Commons, domaine public.</Text>
+      <Text style={[text.small, { color: t.muted }]}>{d.credit}</Text>
     </Screen>
   );
 }

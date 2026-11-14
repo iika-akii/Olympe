@@ -5,7 +5,12 @@
   "dependencies": {
     "@expo-google-fonts/barlow": "^0.4.1",
     "@expo-google-fonts/barlow-condensed": "^0.4.1",
+    "@expo-google-fonts/chakra-petch": "^0.4.1",
+    "@expo-google-fonts/cinzel": "^0.4.2",
     "@expo-google-fonts/grenze-gotisch": "^0.4.2",
+    "@expo-google-fonts/im-fell-english": "^0.4.0",
+    "@expo-google-fonts/spectral": "^0.4.1",
+    "@expo-google-fonts/teko": "^0.4.1",
     "@expo/vector-icons": "^15.1.1",
     "@olympe/core": "workspace:*",
     "@olympe/db": "workspace:*",
