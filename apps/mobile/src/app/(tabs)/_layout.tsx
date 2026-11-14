@@ -22,7 +22,8 @@ export default function TabLayout() {
         // Pas de barre de titre : la statue de chaque onglet monte jusqu'en haut de l'écran.
         headerShown: false,
         tabBarActiveTintColor: t.accent,
-        tabBarInactiveTintColor: t.faint,
+        // Les libellés d'onglets inactifs sont des mots à lire : encre voilée (6,6:1), pas encre pâle (2,8:1).
+        tabBarInactiveTintColor: t.muted,
         // Hauteur explicite (la barre ajoute elle-même la marge basse du système) : par défaut, l'étiquette est rognée.
         tabBarStyle: { backgroundColor: t.bg, borderTopColor: t.border, borderTopWidth: 1, height: 64 + insets.bottom },
         tabBarLabelStyle: { fontFamily: fonts.text, fontWeight: '600', fontSize: 11, lineHeight: 15 },
