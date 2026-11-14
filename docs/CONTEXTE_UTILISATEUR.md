@@ -28,7 +28,7 @@ Discipline de développement imposée : **headless-first**. Les règles métier,
 | Objectif | 85 kg, perte de poids en préservant le muscle | Certain |
 | Travail | Bureau, environ 7 h assis par jour | Certain |
 | Horaires | Départ tôt, retour vers 17h30-18h | Certain |
-| Objet connecté | Google Fitbit (pas, sommeil, dépense) | Certain |
+| Objet connecté | Bracelet Google Fitbit (pas, sommeil, dépense), confirmé le 14/11/2026 | Certain |
 | Téléphone | **Android** (lecture des pas et du sommeil via Health Connect) | Certain |
 | Langue de l'app | Français | Certain |
 
@@ -106,7 +106,7 @@ Discipline de développement imposée : **headless-first**. Les règles métier,
 - Vit en couple. La compagne est **absente en novembre 2026** (alternance). Pendant cette période, l'utilisateur cuisine pour lui seul.
 - Quand elle est là : mêmes plats pour les deux, **portion de la compagne ≈ 2/3** de celle de l'utilisateur (**1/2 pour la viande**). Leurs goûts diffèrent, et c'est une cause d'abandon de la diète.
 - Notes de départ (9/11/2026) : **toutes les recettes du seed plaisent à l'utilisateur** ; la compagne n'en a goûté aucune (« à tester »).
-- Présence de la compagne : **saisie par l'utilisateur dans l'app, repas par repas** (décision du 12/11/2026, remplace la saisie par jour). Seuls les repas cuisinés frais se partagent : les 7 dîners et le samedi midi.
+- Présence de la compagne : **saisie par l'utilisateur dans l'app, repas par repas** (décision du 12/11/2026, remplace la saisie par jour). Seuls les repas cuisinés frais se partagent : les 7 dîners et le samedi midi. Elle ne mange **jamais** avec lui le midi du lundi au vendredi (confirmé le 14/11/2026) : ces midis restent des gamelles pour lui seul.
 - Partage : l'app est **strictement personnelle**. Seul besoin : **envoyer la liste de courses** à la compagne (texte via le menu de partage Android).
 - **Exigence pour l'app** : chaque recette doit pouvoir sortir 2 portions différentes (utilisateur / compagne) à partir d'un seul batch, et les recettes doivent pouvoir être notées « plaît aussi à la compagne : oui / non / à tester ».
 
