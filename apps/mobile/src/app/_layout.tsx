@@ -1,4 +1,4 @@
-import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Splash } from '../components/Splash';
 import { DataProvider } from '../data/store';
@@ -9,15 +9,16 @@ export default function RootLayout() {
   const fontsReady = useAppFonts();
   if (!fontsReady) return <Splash />;
 
+  const base = t.scheme === 'dark' ? DarkTheme : DefaultTheme;
   const navigationTheme = {
-    ...DefaultTheme,
-    colors: { ...DefaultTheme.colors, background: t.bg, card: t.bg, text: t.text, border: t.border, primary: t.accent, notification: t.accent },
+    ...base,
+    colors: { ...base.colors, background: t.bg, card: t.bg, text: t.text, border: t.border, primary: t.accent, notification: t.accent },
   };
 
   return (
     <ThemeProvider value={navigationTheme}>
       <DataProvider>
-        <StatusBar style="dark" />
+        <StatusBar style={t.scheme === 'dark' ? 'light' : 'dark'} />
         <Stack
           screenOptions={{
             headerStyle: { backgroundColor: t.bg },

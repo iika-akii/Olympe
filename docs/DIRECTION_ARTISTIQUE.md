@@ -1,6 +1,6 @@
 # Olympe : direction artistique « Gravure »
 
-> 12 novembre 2026 · Tokens : `apps/mobile/src/theme/tokens.ts` · En-tête gravé : `apps/mobile/src/components/Hero.tsx` · Primitives : `apps/mobile/src/components/ui.tsx`
+> 12 novembre 2026 · Palette : `apps/mobile/src/theme/palettes/gravure.ts` · En-tête gravé : `apps/mobile/src/components/Hero.tsx` · Primitives : `apps/mobile/src/components/ui.tsx`
 
 ## Idée
 
@@ -16,6 +16,7 @@ Un livre de mythologie gravé : des corps de héros et de dieux tracés à l'enc
 
 - Pas de quatrième teinte : ce qui concerne la compagne se dit par un aplat d'encre, une alerte par le rouge et une icône.
 - Contrastes sur le papier : encre 16:1, encre voilée 6,6:1, rouge 6,0:1. L'encre pâle ne sert jamais à un texte à lire.
+- Palettes de rechange `doom` et `raven` (sombres), non actives : `apps/mobile/src/theme/palettes/`, analyse dans `docs/PROPOSITIONS_COULEURS.md`. On change de palette avec `ACTIVE_PALETTE` dans `tokens.ts`.
 
 ## Gravures
 
