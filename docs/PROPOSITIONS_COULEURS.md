@@ -133,21 +133,21 @@ Pour corriger cela, il faudrait préparer pour les thèmes sombres une version i
 
 ## Recommandation
 
-1. **Gravure, à garder comme thème principal.** **[Probable]** C'est celle qui sert le mieux l'usage réel de l'app, en cuisine et en rayon : lisible en pleine lumière, des images rendues comme prévu, une identité qui ne ressemble à aucune autre appli. Je corrigerais seulement les libellés d'onglets inactifs (`faint` → `muted` pour le texte de l'onglet), si vous le souhaitez.
-2. **Raven, si vous voulez un thème sombre.** **[Probable]** C'est la plus lisible des deux et la seule qui reste calme. À essayer le soir sur votre téléphone avant de juger.
-3. **Doom : je la déconseille comme thème principal.** **[Probable]** Elle est lisible et respecte la règle des trois couleurs, mais son vert et son rouge se battent pour l'attention, la paire rouge-vert pose problème aux daltoniens, et ses gravures en négatif sont les plus dures à regarder. Elle dessert une app qu'on ouvre surtout pour lire une recette.
+1. **Gravure en rouge sang, à garder par défaut.** **[Probable]** C'est celle qui sert le mieux l'usage réel de l'app, en cuisine et en rayon : lisible en pleine lumière, des images rendues comme prévu, une identité qui ne ressemble à aucune autre appli. Les libellés d'onglets inactifs sont maintenant corrigés.
+2. **Vert-de-gris, la seule variante qui la vaut.** **[Probable]** Même lisibilité, ambiance plus douce ; on y perd un peu de force dans les alertes.
+3. **Outremer et Nuit : à essayer, pas à adopter les yeux fermés.** Outremer est la plus lisible mais la plus dure à l'œil sur une longue liste ; Nuit affiche les gravures en négatif.
+4. **Pour un thème sombre, préférez la DA Raven à la palette Nuit** : ses images ont été préparées pour le fond sombre. Voir `docs/DA_DOOM_RAVEN.md`.
 
 Limites : **[Certain]** toutes ces observations viennent de l'export web (412 × 915). Sur un écran OLED Android, le noir est plus profond et le rendu sera encore plus contrasté ; la seule façon de trancher est d'essayer en APK.
 
 ## Planches
 
+Captures réelles de l'export web (412 × 915), semaine générée et pesée de 100 kg saisies dans l'interface. Aucune donnée de démonstration n'est enregistrée dans le code.
+
 | Fichier | Contenu |
 |---|---|
-| `docs/couleurs/planche-gravure.jpg` | Aujourd'hui, Cuisine (haut et planning), Suivi (haut et courbe), Profil, Entraînement, Forger |
-| `docs/couleurs/planche-doom.jpg` | Idem, palette Doom |
-| `docs/couleurs/planche-raven.jpg` | Idem, palette Raven |
-| `docs/couleurs/comparatif-aujourdhui.jpg` | Aujourd'hui dans les trois palettes |
-| `docs/couleurs/comparatif-cuisine-bas.jpg` | Planning de la semaine dans les trois palettes |
-| `docs/couleurs/comparatif-profil.jpg` | Profil : effet du négatif sur *L'Ange déchu* |
+| `docs/couleurs/comparatif-gravure-palettes.jpg` | Aujourd'hui dans les quatre palettes de Gravure |
+| `docs/couleurs/comparatif-da-aujourdhui.jpg` · `-recette.jpg` · `-entrainement.jpg` | Gravure, Doom et Raven côte à côte |
+| `docs/couleurs/planche-<apparence>.jpg` | Huit écrans par apparence : gravure, gravure-verdegris, gravure-outremer, gravure-nuit, doom, raven |
 
-Captures prises sur des exports web réels, avec une semaine générée et une pesée de 100 kg saisie dans l'interface. Aucune donnée de démonstration n'est enregistrée dans le code.
+Les sections « Doom » et « Raven » plus haut décrivent les palettes des premières propositions ; elles sont reprises telles quelles dans les DA complètes (`docs/DA_DOOM_RAVEN.md`).

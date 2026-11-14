@@ -45,7 +45,7 @@ export const raven: Direction = {
     body: { fontFamily: F.text, fontWeight: '400', fontSize: 16, lineHeight: 24 },
     strong: { fontFamily: F.text, fontWeight: '600', fontSize: 16, lineHeight: 24 },
     small: { fontFamily: F.text, fontWeight: '400', fontSize: 13, lineHeight: 19 },
-    label: { fontFamily: F.label, fontWeight: '600', fontSize: 11.5, lineHeight: 16, letterSpacing: 0.8, textTransform: 'uppercase' },
+    label: { fontFamily: F.label, fontWeight: '600', fontSize: 10.5, lineHeight: 15, letterSpacing: 0.5, textTransform: 'uppercase' },
     number: { fontFamily: F.text, fontWeight: '500', fontSize: 16, lineHeight: 22, fontVariant: [...tab] },
     button: { fontFamily: F.label, fontWeight: '700', fontSize: 15, lineHeight: 20, letterSpacing: 2, textTransform: 'uppercase' },
     badge: { fontFamily: F.label, fontWeight: '600', fontSize: 11, lineHeight: 16, letterSpacing: 1.2, textTransform: 'uppercase' },

@@ -36,7 +36,16 @@ Elles reprennent une ambiance et des teintes, rien d'autre : aucun logo, personn
 
 **[Certain]** Pas d'orange : le rouge est tiré vers le carmin, le vert vers l'olive.
 
-IMAGES_DOOM
+### Images (Gustave Doré, *L'Enfer* de Dante, 1861)
+
+| Écran | Planche | Pourquoi |
+|---|---|---|
+| Olympe (aujourd'hui) | Pl. 8, chant III, la porte de l'Enfer | Le seuil : on entre dans la journée |
+| Entraînement | Pl. 22, chant VII, avares et prodigues | Des hommes qui poussent d'énormes poids |
+| Forger | Pl. 65, chant XXXI, les Titans | La force brute |
+| Cuisine | Pl. 3, chant I, le lion | Le lion « à la faim enragée » |
+| Profil | Pl. 1, chant I, la forêt obscure | « Au milieu du chemin de notre vie » : où j'en suis |
+| Écran d'attente | Pl. 9, chant III, Charon | Le passeur |
 
 ## Raven
 
@@ -48,7 +57,16 @@ IMAGES_DOOM
 | **Lueur** | `#F1EEF8` · voilée `#B7B0C6` | Texte, images, bouton principal, compagne |
 | **Améthyste** | `#B28CFF` · claire `#CDB4FF` · ombre `#2E2245` | Rehaut : sélection, jour, alertes, courbe |
 
-IMAGES_RAVEN
+### Images (Gustave Doré, *Le Corbeau* d'Edgar Poe, 1884)
+
+| Écran | Planche | Pourquoi |
+|---|---|---|
+| Olympe (aujourd'hui) | n° 15, le cimetière sous la lune | Le décor du poème |
+| Entraînement | n° 12, la fenêtre ouverte en grand | Le seul geste vif du recueil |
+| Forger | n° 21, le bras levé vers le buste | L'effort tendu vers le haut |
+| Cuisine | n° 17, la table sous la lampe | L'intérieur, la lumière posée |
+| Profil | n° 24, le spectre sur la mer | La silhouette seule |
+| Écran d'attente | n° 1, le corbeau qui entre | L'arrivée |
 
 ## Les images en « trait clair »
 
@@ -86,7 +104,11 @@ Calcul WCAG 2.1 sur les valeurs des fichiers de palette.
 
 ## Recommandation
 
-RECO
+1. **Gravure (rouge sang) reste ma recommandation pour l'usage quotidien.** **[Probable]** C'est la plus lisible en pleine lumière, en cuisine et en rayon, et la seule dont les images sont rendues comme elles ont été dessinées.
+2. **Raven est la meilleure des deux nouvelles DA.** **[Probable]** C'est la plus confortable à lire (Spectral), la plus reposante le soir, et les images de Doré y sont les plus cohérentes avec l'ambiance. Si vous voulez une app sombre, c'est celle-là.
+3. **Doom est la plus spectaculaire, mais la plus fatigante.** **[Probable]** Elle convient à l'onglet Entraînement plus qu'à une recette lue pendant 30 minutes. Si elle vous plaît, je garderais sa typographie et ses plaques, mais j'éteindrais le vert du bouton principal au profit de l'acier poli : on reviendrait à une seule couleur saturée.
+
+Le seul moyen de trancher : installer l'APK et passer d'une apparence à l'autre dans Profil, le soir puis en cuisine.
 
 ## Limites
 
